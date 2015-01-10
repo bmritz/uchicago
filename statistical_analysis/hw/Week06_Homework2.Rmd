@@ -1,0 +1,29 @@
+Week 6 Homework 2 - Simulation with Logistic Regression
+========================================================
+Brian Ritz
+--------------------------------------------------------
+MSCA 31007 Autumn 2014
+--------------------------------------------------------
+Case 1
+-----------------
+
+For my example of a data process that can be estimated using logistic regression, I will try to find the probability of water being frozen given its temperature taken from an inexact thermometer. The thermometer used to take the measurements has normally distributed errors with mean 0 and standard deviation of 2.
+
+First, I will construct my dataset.
+
+```{r}
+#outcome vector - 1 for frozen, 0 for unfrozen
+freezepoint <- 32
+nSample <- 1000
+outcome <- rbinom(nSample,1,.5)
+errors <- rnorm(nSample, mean=0, sd=2)
+
+temp <- freezepoint + ((outcome-.5)*2)*runif(nSample,max=7) + errors
+
+input.data <- data.frame(temp=temp, frozen=outcome)
+plot(input.data)
+```
+
+```{r}
+model<-glm(frozen~temp,data=input.data,family=binomial(link=logit))
+```

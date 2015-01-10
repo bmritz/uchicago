@@ -1,0 +1,44 @@
+Week 9 Homework 1 - PRICIPAL COMPONENTS ANALYSIS EXAMPLE
+========================================================
+Brian Ritz
+--------------------------------------------------------
+MSCA 31007 Autumn 2014
+--------------------------------------------------------
+
+Load the data from the PCA example data from chalk.
+
+```{r}
+Project.Data<-read.csv(file="C:/Users/Brian_Ritz/uchicago/statistical_analysis/hw/PCA_ExampleData.csv",header=TRUE,sep=",")
+Project.Data[1:10,]
+```
+
+The first row of Project.Data contains the levels at which the variables are measured.
+Separate them from the Outputs for further analysis
+
+```{r}
+Data.Points<-Project.Data[1,]
+Project.Data<-Project.Data[-1,]
+matplot(Project.Data,type="l")
+```
+
+Apply princomp to Project.Data, identify and interpret factor loadings. Check importance of factors and decide how many factors you would leave in the model.
+
+```{r}
+pcao <- princomp(Project.Data)
+pro <- prcomp()
+```
+
+Print out the loadings:
+
+```{r}
+print(summary(pcao))
+print(pcao$loadings)
+```
+
+
+NOTES:
+
+The importance of the factors can be seen as a function of the proportion of variance in the data that can be explained by that factor. We can observe this in the output of the summary() of the PCA. We see from the summary that the first factor can explain over 99% of the variance in the data. Very little variance is explained by any compnent after the third component. Therefore, I would leave just the first factor in the model. 
+
+The factor loadings are the weights that should be given to each standardized variable in order to compute the factors. For example, the computation of the first factor follows the follow linear equation: Factor1 = -0.584\*V1 + -0.295\*V2 + 0.186\*V5 + 0.218\*V6 + 0.186\*V7 + -0.295\*V10 + -0.584\*V11 as long as all of the variables V1-V11 are standardized first (there are a few smaller terms omitted by the output).
+

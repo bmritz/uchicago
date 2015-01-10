@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>R Basics Workshop</title>
+  <meta charset="utf-8">
+  <meta name="description" content="R Basics Workshop">
+  <meta name="author" content="Jon Berthet and Naveen Venkataraman">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>R Basics Workshop</h1>
+    <h2>Learning basic data munging and relevant packages</h2>
+    <p>Jon Berthet and Naveen Venkataraman<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Agenda</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li>Installing and Loading Packages</li>
+<li>Reading Data into R - using <em>jsonlite</em> package</li>
+<li>Reshaping Data (Wide to Long format) - using <em>reshape2</em> package</li>
+<li>Data Manipulation - using <em>dplyr</em> package</li>
+<li>Data Visualization - using <em>ggplot2</em> package</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Installing Packages</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>install.packages(&quot;packagename&quot;)</li>
+<li>library(packagename)</li>
+</ul>
+
+<p><strong>Exercise 1:</strong> Install and load these packages into the R environment</p>
+
+<ul>
+<li>httr</li>
+<li>jsonlite</li>
+<li>dplyr</li>
+<li>ggplot2</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Reading Data into R</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>What is JSON 
+
+<ul>
+<li><a href="http://fx.priceonomics.com/v1/rates/">http://fx.priceonomics.com/v1/rates/</a></li>
+<li><a href="http://fantasy.premierleague.com/web/api/elements/1/">http://fantasy.premierleague.com/web/api/elements/1/</a></li>
+</ul></li>
+</ul>
+
+<p><strong>Exercise 2:</strong> Fetch your IP address</p>
+
+<ul>
+<li><a href="http://ip.jsontest.com/">http://ip.jsontest.com/</a></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Data Manipulation</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>dplyr</li>
+<li>Key features
+
+<ul>
+<li>tbl_df()</li>
+<li>%&gt;% chaining operator</li>
+<li>Verbs
+
+<ul>
+<li>select</li>
+<li>filter</li>
+<li>arrange</li>
+<li>mutate</li>
+<li>summarise</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p><strong>Exercise 3a:</strong> Come up with a metric for the sports dataset and use dplyr to generate it</p>
+
+<p><strong>Exercise 3b:</strong> Explain why the metric is relevant</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Data Visualization</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>ggplot2: Grammar of Graphics</p>
+
+<ul>
+<li>Plots as objects</li>
+<li>Layering aesthetics and options</li>
+</ul>
+
+<p><strong>Exercise 4:</strong> Visualize the sports dataset metric</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>Summary</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Installing and Loading packages in R</li>
+<li>Reading data
+
+<ul>
+<li>read.csv</li>
+<li>jsonlite package</li>
+</ul></li>
+<li>Data munging using dplyr</li>
+<li>Visualization using ggplot2</li>
+<li>Metrics
+
+<ul>
+<li>Context</li>
+<li>Relevance</li>
+<li>Communication</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>Resources</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>R, Statistics</p>
+
+<ul>
+<li>Basics
+
+<ul>
+<li>Coursera: <a href="http://www.coursera.org">www.coursera.org</a></li>
+<li>R Programming: <a href="https://www.coursera.org/course/rprog">https://www.coursera.org/course/rprog</a></li>
+</ul></li>
+<li>Advanced
+
+<ul>
+<li><a href="http://adv-r.had.co.nz/">http://adv-r.had.co.nz/</a></li>
+</ul></li>
+<li>R Studio: <a href="http://www.rstudio.com">www.rstudio.com</a></li>
+</ul></li>
+<li><p>Visualization: </p>
+
+<ul>
+<li>R Graphics Cookbook by Winston Chang</li>
+<li>rCharts</li>
+<li><a href="http://www.flowingdata.com">www.flowingdata.com</a></li>
+<li>Tableau (free for UChicago students)</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Agenda'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Installing Packages'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Reading Data into R'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Data Manipulation'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Data Visualization'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Summary'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Resources'>
+         7
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

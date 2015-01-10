@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Week 1 Homework 2 - Analyze Trajectories of Multiple Coin Tossing Experiment</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Week 1 Homework 2 - Analyze Trajectories of Multiple Coin Tossing Experiment</h1>
+
+<h2>Brian Ritz</h2>
+
+<h2>MSCA 31007 Autumn 2014</h2>
+
+<p>Toss a coin 100,000 times.
+We will first check our random number generator &ndash; is it really 50% chance heads/tails?</p>
+
+<pre><code class="r">set.seed(12345)
+
+nFlips &lt;- 100000
+
+Flips &lt;-sample(0:1, nFlips, repl=T)
+
+Trajectory &lt;- cumsum(Flips)
+
+nTraj &lt;- Trajectory/(1:nFlips)
+par(mfrow=c(1,1))
+plot(nTraj, ylim=c(.3,.7), type=&quot;l&quot;, col=&quot;blue&quot;)
+lines(c(0,nFlips),c(.5,.5))
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAgVBMVEX9/v0AAAAAADkAAGUAAP8AOWUAOY8AZrU5AAA5ADk5AGU5OWU5OY85ZrU5j9plAABlADllAGVlOQBlOY9lZmVltf2POQCPOTmPOWWPZgCPjzmPtY+P29qP2/21ZgC1/rW1/v3ajzna24/a/tra/v39tWX924/929r9/rX9/tr9/v3vkzagAAAAK3RSTlP///////////////////////////////////////////////////////8AI8mn0AAAAAlwSFlzAAALEgAACxIB0t1+/AAACn9JREFUeJzt3Q1X6lYaQOHm6qhzx4HaGbidmUqlFRry/3/g5NOLJkhCDuRw935W17JF+ipuThKi0Z8yIf009SegaRgeyvBQhocyPJThoQwPZXgow0MZHsrwUIaHMjyU4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0MZHsrwUIaHMjyU4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0MZHmpM+EQxO2P49/95O2KUgjM8lOGhDA9leKix4dP5rOdow0dldPin/yaLXqMNH5Xx4V+yVXLzcny04aMSInyxwe9ob/iYhQnfZ7Tho+JRPZThoUKF39vkH/g2gOGj4oqHMjzU6PDbh3Kz3vFK3vAxGxt+t6zO223uXo+MNnxUQr2O73g9b/iYueKhRu/j07n7+GvkUT2U4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0MZHsrwUIaHMjyU4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0MZHsrwUIaHMjyU4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0MZHsrwUKPDbx8Wu2WS3L0eG234qIwNv1sustUi7//YKm/4mI0Nnz697L49l2+PjDZ8VEZv6vPlvpll2eb+2GjDR2X8wd0qKbS7Gz5qHtVDGR4qVPi9g7uk8f4eho+KKx7K8FABztyVm/Wb1st4w0ctxJm7wqZ9ztbwMQtw5u7d28OjDR8VVzzU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" alt="plot of chunk unnamed-chunk-1"/> </p>
+
+<p><strong>INTERPRETATION</strong></p>
+
+<p>As we move along the X axis (flip more and more times), the percentage of total flips that is heads (or tails) becomes very close to .5, as we expected. This indicates that the coin is a fair coin. Over the short term, there are more 1&#39;s than 0&#39;s, but iafter about 20000 observations of the coin flip the number of 1&#39;s becomes very close to the number of 0&#39;s when expressed as a percentage of total flips.</p>
+
+<p><em>QUESTION:</em>
+<em>How much do I expect the trajectory of wealth to deviate from zero and how long do I expect to stay on one side above and below?</em>
+I expect the trajectory of wealth could get very far from zero, perhaps even up to 1000 cumulative flips. I expect that that longest that the cumulative sum might stay on one side of 0 will be about 500 turns. </p>
+
+<p>The following lines will generate a trajectory that goes up one step if the current outcome is Tails and down one step if the outcome is Heads. The total number of steps is now 1,000,000.</p>
+
+<pre><code class="r">set.seed(12345)
+nFlips &lt;- 1000000
+Flips.plusminus1 &lt;- (sample(0:1, nFlips, repl=T)-.5)*2
+Trajectory.plusminus1 &lt;- cumsum(Flips.plusminus1)
+plot(Trajectory.plusminus1, ylim=c(-1000,1000),type=&quot;l&quot;, col=&quot;blue&quot;);
+lines(c(0,nFlips),c(0,0));
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-2"/> </p>
+
+<p><em>Another check of intuition. What do you expect the probabilities of the following events be:</em></p>
+
+<p>&ldquo;In 500 coin tosses the difference between the number of Heads and the number of Tails is less than 5 in absolute value&rdquo;
+<strong>I expect the probability of this is .2</strong></p>
+
+<p>&ldquo;In 500 coin tosses the difference between the number of Heads and the number of Tails is greater than 25 in absolute value&rdquo;
+<strong>I expect the probability of this is .05</strong></p>
+
+<p>Find out by transforming the 1,000,000 flips into 2000x500 flip matrix </p>
+
+<pre><code class="r">Flips.matrix &lt;- matrix(data=Flips.plusminus1, nrow=2000, ncol=500)
+Trajectory.matrix &lt;- t(apply(Flips.matrix, MARGIN=c(1), cumsum))
+
+# take last row -- this is the last sums
+final.difference &lt;- Trajectory.matrix[,500]
+
+probability.less.than.5 &lt;- mean(abs(final.difference) &lt; 5 )
+probability.greater.than.25 &lt;- mean(abs(final.difference) &gt; 25)
+</code></pre>
+
+<p>The probability of the difference between the number of heads and the number of tails being less than 5 was found to be <code>probability.less.than.5</code>.</p>
+
+<p>The probability of the difference between the number of heads and the number of tails being greater than 25 was found to be <code>probability.greater.than.25</code>.</p>
+
+<p><strong>INTERPRETATION</strong></p>
+
+<p>Even though we know the coin is fair, we found that there is a sizeable chance (~25%) that you will find over 25 more heads than tails in 500 Flips. This was more than my intuition.</p>
+
+<p><em>Final intuition check. How long the trajectory should normally spend on one side from zero, below or above, before crossing to the other side?</em></p>
+
+<p>I&#39;d expect it to be very short period of time or a very long period of time, because the longer it takes to cross the axis, the further it presumably is from the axis. If I had to give an average I&#39;d say 500 Flips.</p>
+
+<pre><code class="r">Flips.matrix &lt;- matrix(data=Flips.plusminus1, nrow=2000, ncol=500)
+Trajectory.matrix &lt;- t(apply(Flips.matrix, MARGIN=c(1), cumsum))
+Trajectory.is.zero &lt;- t(apply(Trajectory.matrix, MARGIN=c(1), function(x) x == 0))
+ZeroCrossingTimes2000Samples &lt;-apply(Trajectory.is.zero, MARGIN=c(1), FUN=which)
+
+
+#ZeroCrossingTimes2000Samples&lt;-(t(apply((t(apply(matrix(Flips,ncol=500),1,cumsum))==0),1,&#39;*&#39;,(1:500))))
+</code></pre>
+
+<p>The following function determines the time intervals between crossings:</p>
+
+<pre><code class="r">TimeIntervalsBetweenCrossings &lt;- function(CrossingTimes){
+  if(length(CrossingTimes) == 0) { 
+    return(0)
+  }else{
+    xtimes.sort &lt;- sort(CrossingTimes[CrossingTimes&gt;0])
+    return(sum(diff(xtimes.sort) -1))
+  }
+}
+
+#TimeIntervalsBetweenCrossings &lt;- function(CrossingTimes) { return(sum(diff(CrossingTimes[CrossingTimes&gt;0])-1)) }
+</code></pre>
+
+<p>Apply that function across the 2000 runs and plot the histogram</p>
+
+<pre><code class="r">hist((sapply(ZeroCrossingTimes2000Samples, TimeIntervalsBetweenCrossings)), main=&quot;Histogram&quot;, xlab=&quot;Sum of zero crosses&quot;)
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAgVBMVEX9/v0AAAAAADkAAGUAOTkAOY8AZo8AZrU5AAA5ADk5AGU5OWU5OY85ZrU5j485j9plAABlADllAGVlOQBlZjlltf2POQCPOTmPOWWPj2WPtY+P29qP2/21ZgC124+1/rW1/v3ajzna24/a/rXa/tra/v39tWX924/9/rX9/tr9/v1zL03xAAAAK3RSTlP///////////////////////////////////////////////////////8AI8mn0AAAAAlwSFlzAAALEgAACxIB0t1+/AAADO9JREFUeJztnW2D2rgVRtczmzJN00K2hWy70IXdhhf//x9Yyy8DzEAAW3d05eecDyFjLg+Gg2QJEP6pBEl+Sr0DkAbEi4J4URAvCuJFQbwoiBcF8aIgXhTEi4J4URAvCuJFQbwoiBcF8aIgXhTEi4J4URAvCuJFQbwoiBcF8aIgXhQR8fvZ87osD4vndfO/jtU83T6lRU782eZVgfhx86bF716K4nl9WBRFMSnLTXUxLcPVxfPvs0/fD4unfxVPy221+WlZbou/VNvXVdGoXiSS4vezymnx6X+N+FX4o7qsXwc/vwTx4do/m6Lv26LjTXeRNzLiO3dB/K6yW28OXf3upWrW+9nTcvdSmd0UtfhJd7Pn9bYINyjmoSThI4iNpPj6r9B+g/htbXlTzOv/7JuuftndKIif1C+AbutIkBH/7hgfjt8/El/XvIo/vhxGgqb4QJB+rasPijfVgC9sQnzOnIvvGnMY110c3AXF24IWnz8Xuvq2O6+Ged10rjqmd9O5oLh6QUzbIwDiR8+2aAf8Ywfxr7Qj/2nq/fgYEH9k2xzrNUC8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KBHFF/cR7w5hADHFR6wCaxAvCuJFQbwot8U3v/95x4+1Iz4nboo/LJoTM2xv/uIj4nPipvj9L+uzy+sgPido8aLcPsa3P/HKMX5cMKoXBfGiMJ0ThcGdKH2mc1c+aEN8Tgxp8YjPmCHTOcRnzJBRPeIzBvGi3DW4C739hUE94jPmHvH1gH7393dXIT5j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" alt="plot of chunk unnamed-chunk-6"/> </p>
+
+<p>The law that describes this behavior is the Arc-Sine Law. We see this behavior because the further the process gets from the origin, the longer it is expected to take to return to the origin. </p>
+
+</body>
+
+</html>
+

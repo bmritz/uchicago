@@ -1,0 +1,73 @@
+Week 5 Homework 2 - ESTIMATE SIMPLE REGRESSION MODELS FROM COURSE ASSIGNMENT DATA
+========================================================
+Brian Ritz
+--------------------------------------------------------
+MSCA 31007 Autumn 2014
+--------------------------------------------------------
+
+
+First we will import the course assignment file and take a look at it.
+
+```{r}
+# import the data
+
+rawData<-
+  read.csv(file="C:/Users/brianr/Desktop/uchicago/statistical_analysis/hw/RegressionAssignmentData2014.csv",
+           header=TRUE,sep=",")
+rawData[1:10,]
+```
+
+Now we plot
+
+```{r}
+
+matplot(rawData[,-c(1,10,11)],type='l')
+
+```
+
+Now we will look at the simple linear regression model of all of the input variables to the output variable.
+
+```{r}
+target.variable = "Output1"
+reg.cols = colnames(rawData)[2:8]
+
+all.models <- apply(rawData[reg.cols],2,FUN=function(x){lm(as.matrix(rawData[target.variable]) ~ x)})
+
+# collect the coefficients as a table
+all.coefficients <- as.data.frame(lapply(all.models, FUN=function(x){x$coefficients}))
+
+#rename the rows of the table
+rownames(all.coefficients) <- c("intercept", "Beta1")
+
+# rename the coefficients
+for (i in (1:length(all.models))){
+  names(all.models[[i]]$coefficients) <- c("intercept", reg.cols[i])
+  print("************************")
+  print(paste("SUMMARY FOR", reg.cols[i]))
+  print("************************")
+  print(summary(all.models[[i]]))
+  
+  print(c(Total.Variance=var(rawData[target.variable]), Unexplained.Variance=summary(all.models[[i]])$sigma^2, 
+        R.Squared=(1-(summary(all.models[[i]])$sigma^2/var(rawData[target.variable])))))
+  
+  print(c(Correlation.Coefficient = cor(rawData[target.variable], rawData[reg.cols][,i]), 
+          R.Sq=cor(rawData[target.variable], rawData[reg.cols][,i])^2))
+  matplot(rawData[target.variable], type="l", xaxt="n", main=paste("Plot for", reg.cols[i]))
+  lines(all.models[[i]]$fitted.values, col="red")
+}
+```
+
+Lets collect the slopes and intercepts in a table
+
+```{r}
+print ("Table of all coefficients")
+print(all.coefficients)
+```
+
+*INTERPRETATION OF THE MODEL*
+
+The steepness of the slope (Beta1 Parameter) denotes how much the Output1 variable changes on average for every 1 point increase in the X variable. For example, on average, for every increase in USGG3M of 1, Output1 increases by 2.507. This means that for every 1 percentage point increase in the interest rate of the USGG3M bond, the Output1 variable on average increases by 2.507.
+
+The amount of correlation can be explained by the correlation coefficient, (r). This is the same r in the R^2 calculation, so we take the sqrt(R^2) to find the correlation coefficient. We can also compute the correlation coefficient directly in R, as I have done above. The correlation coefficient is a measure of how Y's position within its distribution matches the position of its paired X value within its distribtion.
+
+If we square the correlation coefficient, we get R^2, which is a measure of how much variation in the dependent variables is explained by the variation of the independent variables in our model. R^2 is also called the goodness-of-fit, because it is a measure of how close the points in our data are to our regression line.

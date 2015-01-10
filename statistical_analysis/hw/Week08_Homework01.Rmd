@@ -1,0 +1,172 @@
+Week 8 Homework 1 - One Way Anova Examples
+========================================================
+Brian Ritz
+--------------------------------------------------------
+MSCA 31007 Autumn 2014
+--------------------------------------------------------
+
+
+First, load packages
+
+```{r}
+library(faraway)
+library(fastR)
+
+# the example data is coagulation
+print(coagulation)
+```
+
+Plot the coagulation data
+
+```{r}
+xyplot(coag~diet, data=coagulation, pch=19,col="black")
+```
+
+**Evaluate the means with your intuition**
+Looking at this visually, it looks like the means of A, B, and C diets are all different, with mean(C)>mean(B)>mean(A). It appears to my intuition that mean(D) = mean(A).
+
+Now we check by computing simple statistics for the data:
+```{r}
+# favstats will give mean, median, min, max,n, Q1, Q3, sd, n, and missing n
+coag.data.statistics<-favstats(coag~diet,data=coagulation)
+coag.data.statistics
+```
+
+Look at the means:
+```{r}
+coag.means<-cbind(mean=coag.data.statistics[,7],size=coag.data.statistics[,9])
+coag.means
+```
+
+Now we fit a linear model of diet on coag, we will look at the summary:
+```{r}
+coag.model<-lm(coag~diet,data=coagulation)
+summary(coag.model)
+```
+
+The model treats the diet variable as a dummy variable, with diet A being the default (all dummy vars turned off). The fact that the dietB and dietC variables are significant means that when the diet is either B or C, the mean of the coag variable can be expected to be higher by the parameter estimate, which is 5 for dietB and 7 for dietC. 
+
+Fit anova regression to model:
+```{r}
+anova(coag.model)
+```
+The diet variable is significant in the anova model as well.
+
+We will now create a matrix of inputs for ANOVA. **WHY DO WE CREATE THREE INPUTS FOR 4 DIETS?** Because one of the diets will be represented by all of the input variables being false. 4 variables would "over determine" the system, and create multi-coliniarity.
+
+```{r}
+coag<-coagulation
+coag$x1<-coag$diet=="B"
+coag$x2<-coag$diet=="C"
+coag$x3<-coag$diet=="D"
+coag
+```
+
+Fit full and null linear models for coag~x1+x2+x3 (all inputs) and coag~1 (intercept only).
+Compare the two models using anova.
+```{r}
+coag.model.full<-lm(coag~x1+x2+x3, data=coag)
+coag.model.null<-lm(coag~1,data=coag)
+anova(coag.model.null,coag.model.full)
+```
+
+We get the same results as before when we ran the ANOVA just on the diet dummy variables.
+
+Now we will manually calculate the sum of squares from the ANOVA.
+We need to get a grand mean and vector of group means
+```{r}
+# grand mean
+grand.mean<-mean(coagulation$coag)
+grand.mean
+
+# group means
+create.vector.of.means<-function(my.group.data) {
+  rep(my.group.data[1],my.group.data[2])
+}
+group.mean<-unlist(apply(coag.means,1,create.vector.of.means))
+group.mean
+```
+
+Now that we have the grand mean and the group means, we can calculate the sum of squares:
+```{r}
+SST<-sum((coagulation$coag-grand.mean)^2)
+SSE<-sum((coagulation$coag-group.mean)^2)
+SSM<-sum((group.mean-grand.mean)^2)
+print(SST)
+print(SSE)
+print(SSM)
+```
+
+Let's compare our manually created sum of squares to summary(coag.model):
+```{r}
+names(summary(coag.model))
+names(anova(coag.model))
+
+sumsq <-anova(coag.model)["Sum Sq"][,1]
+
+#check that SST equals:
+print(sum(sumsq))
+print(SST)
+
+# check that SSE equals
+
+print(sumsq[2] )
+print(SSE)
+
+# check that SSM equals 
+print(sumsq[1])
+print(SSM)
+```
+
+Yes, our manual computation matches the anova formula.
+
+Check what experiment plan (basis) R uses in lm:
+```{r}
+model.matrix(coag.model)
+```
+
+Fit the alternative model without intercept.
+```{r}
+coag.altmodel<-lm(coag~diet-1,data=coagulation)
+summary(coag.model)
+```
+
+**Compare ANOVA tables for coag.model and coag.altmodel. Note the difference in F-tests.**
+```{r}
+anova(coag.model)
+anova(coag.altmodel)
+```
+The F test indicates the the coag.altmodel is more significant than the coag.model. There is also one more degree of freedom in the altmodel because we used another indicator variable in place of an intercept.
+
+Check the basis selected for the alternative model:
+```{r}
+model.matrix(coag.altmodel)
+```
+**EXPLAIN THE DIFFERENCES IN THE TWO BASES**
+The first base has an intercept variable which is always one, while the altmodel base has no such variable. In its place, the altmodel has an indicator variable that indicates whether DietA is on. In this way, the altmodel constructs a "prediction" by adding on the effect of either dietA, dietB, dietC, or dietD onto a "base" of zero. THe original model's "base" is the mean of dietA, onto which it then adds the difference between dietsB/C/D and dietA to achieve the means of dietsB/C/D.
+
+
+**Answer the question:**
+
+**What is the null hypothesis in anova(coag.model) and how is it different from the null hypothesis of anova(coag.altmodel)?**
+The null hypothesis of anova(coag.model) is: dietsB/C/D have the same means than dietA. The null hypothesis of anova(coag.altmodel) is: dietsA/B/C/D have means zero. It is natural that the null for anova(coag.altmodel) is rejected with greater significance given how the dot plot looks.
+
+----------
+Example 7.3.5
+----------
+
+Show the data
+```{r}
+airpollution
+```
+
+Calculate group means.
+```{r}
+mean(pollution~location,data=airpollution)
+```
+
+Fit linear model and run anova.
+```{r}
+airp.model<-lm(pollution~location,data=airpollution)
+anova(airp.model)
+```

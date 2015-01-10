@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Week 8 Homework 1 - One Way Anova Examples</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Week 8 Homework 1 - One Way Anova Examples</h1>
+
+<h2>Brian Ritz</h2>
+
+<h2>MSCA 31007 Autumn 2014</h2>
+
+<p>First, load packages</p>
+
+<pre><code class="r">library(faraway)
+library(fastR)
+</code></pre>
+
+<pre><code>## Loading required package: mosaic
+## Loading required package: car
+## 
+## Attaching package: &#39;car&#39;
+## 
+## The following objects are masked from &#39;package:faraway&#39;:
+## 
+##     logit, vif
+## 
+## Loading required package: dplyr
+## 
+## Attaching package: &#39;dplyr&#39;
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
+## 
+## Loading required package: lattice
+## 
+## Attaching package: &#39;lattice&#39;
+## 
+## The following object is masked from &#39;package:faraway&#39;:
+## 
+##     melanoma
+## 
+## Loading required package: ggplot2
+## 
+## Attaching package: &#39;mosaic&#39;
+## 
+## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     do, tally
+## 
+## The following object is masked from &#39;package:car&#39;:
+## 
+##     logit
+## 
+## The following objects are masked from &#39;package:faraway&#39;:
+## 
+##     ilogit, logit
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     binom.test, cor, cov, D, fivenum, IQR, median, prop.test, sd,
+##     t.test, var
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     max, mean, min, prod, range, sample, sum
+## 
+## 
+## Attaching package: &#39;fastR&#39;
+## 
+## The following object is masked from &#39;package:faraway&#39;:
+## 
+##     punting
+## 
+## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     panel.smooth
+</code></pre>
+
+<pre><code class="r"># the example data is coagulation
+print(coagulation)
+</code></pre>
+
+<pre><code>##    coag diet
+## 1    62    A
+## 2    60    A
+## 3    63    A
+## 4    59    A
+## 5    63    B
+## 6    67    B
+## 7    71    B
+## 8    64    B
+## 9    65    B
+## 10   66    B
+## 11   68    C
+## 12   66    C
+## 13   71    C
+## 14   67    C
+## 15   68    C
+## 16   68    C
+## 17   56    D
+## 18   62    D
+## 19   60    D
+## 20   61    D
+## 21   63    D
+## 22   64    D
+## 23   63    D
+## 24   59    D
+</code></pre>
+
+<p>Plot the coagulation data</p>
+
+<pre><code class="r">xyplot(coag~diet, data=coagulation, pch=19,col=&quot;black&quot;)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-2"/> </p>
+
+<p><strong>Evaluate the means with your intuition</strong>
+Looking at this visually, it looks like the means of A, B, and C diets are all different, with mean&copy;&gt;mean(B)&gt;mean(A). It appears to my intuition that mean(D) = mean(A).</p>
+
+<p>Now we check by computing simple statistics for the data:</p>
+
+<pre><code class="r"># favstats will give mean, median, min, max,n, Q1, Q3, sd, n, and missing n
+coag.data.statistics&lt;-favstats(coag~diet,data=coagulation)
+coag.data.statistics
+</code></pre>
+
+<pre><code>##   .group min    Q1 median    Q3 max mean    sd n missing
+## 1      A  59 59.75   61.0 62.25  63   61 1.826 4       0
+## 2      B  63 64.25   65.5 66.75  71   66 2.828 6       0
+## 3      C  66 67.25   68.0 68.00  71   68 1.673 6       0
+## 4      D  56 59.75   61.5 63.00  64   61 2.619 8       0
+</code></pre>
+
+<p>Look at the means:</p>
+
+<pre><code class="r">coag.means&lt;-cbind(mean=coag.data.statistics[,7],size=coag.data.statistics[,9])
+coag.means
+</code></pre>
+
+<pre><code>##      mean size
+## [1,]   61    4
+## [2,]   66    6
+## [3,]   68    6
+## [4,]   61    8
+</code></pre>
+
+<p>Now we fit a linear model of diet on coag, we will look at the summary:</p>
+
+<pre><code class="r">coag.model&lt;-lm(coag~diet,data=coagulation)
+summary(coag.model)
+</code></pre>
+
+<pre><code>## 
+## Call:
+## lm(formula = coag ~ diet, data = coagulation)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+##  -5.00  -1.25   0.00   1.25   5.00 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 6.10e+01   1.18e+00   51.55  &lt; 2e-16 ***
+## dietB       5.00e+00   1.53e+00    3.27  0.00380 ** 
+## dietC       7.00e+00   1.53e+00    4.58  0.00018 ***
+## dietD       2.99e-15   1.45e+00    0.00  1.00000    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.37 on 20 degrees of freedom
+## Multiple R-squared:  0.671,  Adjusted R-squared:  0.621 
+## F-statistic: 13.6 on 3 and 20 DF,  p-value: 4.66e-05
+</code></pre>
+
+<p>The model treats the diet variable as a dummy variable, with diet A being the default (all dummy vars turned off). The fact that the dietB and dietC variables are significant means that when the diet is either B or C, the mean of the coag variable can be expected to be higher by the parameter estimate, which is 5 for dietB and 7 for dietC. </p>
+
+<p>Fit anova regression to model:</p>
+
+<pre><code class="r">anova(coag.model)
+</code></pre>
+
+<pre><code>## Analysis of Variance Table
+## 
+## Response: coag
+##           Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+## diet       3    228    76.0    13.6 4.7e-05 ***
+## Residuals 20    112     5.6                    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+</code></pre>
+
+<p>The diet variable is significant in the anova model as well.</p>
+
+<p>We will now create a matrix of inputs for ANOVA. <strong>WHY DO WE CREATE THREE INPUTS FOR 4 DIETS?</strong> Because one of the diets will be represented by all of the input variables being false. 4 variables would &ldquo;over determine&rdquo; the system, and create multi-coliniarity.</p>
+
+<pre><code class="r">coag&lt;-coagulation
+coag$x1&lt;-coag$diet==&quot;B&quot;
+coag$x2&lt;-coag$diet==&quot;C&quot;
+coag$x3&lt;-coag$diet==&quot;D&quot;
+coag
+</code></pre>
+
+<pre><code>##    coag diet    x1    x2    x3
+## 1    62    A FALSE FALSE FALSE
+## 2    60    A FALSE FALSE FALSE
+## 3    63    A FALSE FALSE FALSE
+## 4    59    A FALSE FALSE FALSE
+## 5    63    B  TRUE FALSE FALSE
+## 6    67    B  TRUE FALSE FALSE
+## 7    71    B  TRUE FALSE FALSE
+## 8    64    B  TRUE FALSE FALSE
+## 9    65    B  TRUE FALSE FALSE
+## 10   66    B  TRUE FALSE FALSE
+## 11   68    C FALSE  TRUE FALSE
+## 12   66    C FALSE  TRUE FALSE
+## 13   71    C FALSE  TRUE FALSE
+## 14   67    C FALSE  TRUE FALSE
+## 15   68    C FALSE  TRUE FALSE
+## 16   68    C FALSE  TRUE FALSE
+## 17   56    D FALSE FALSE  TRUE
+## 18   62    D FALSE FALSE  TRUE
+## 19   60    D FALSE FALSE  TRUE
+## 20   61    D FALSE FALSE  TRUE
+## 21   63    D FALSE FALSE  TRUE
+## 22   64    D FALSE FALSE  TRUE
+## 23   63    D FALSE FALSE  TRUE
+## 24   59    D FALSE FALSE  TRUE
+</code></pre>
+
+<p>Fit full and null linear models for coag~x1+x2+x3 (all inputs) and coag~1 (intercept only).
+Compare the two models using anova.</p>
+
+<pre><code class="r">coag.model.full&lt;-lm(coag~x1+x2+x3, data=coag)
+coag.model.null&lt;-lm(coag~1,data=coag)
+anova(coag.model.null,coag.model.full)
+</code></pre>
+
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: coag ~ 1
+## Model 2: coag ~ x1 + x2 + x3
+##   Res.Df RSS Df Sum of Sq    F  Pr(&gt;F)    
+## 1     23 340                              
+## 2     20 112  3       228 13.6 4.7e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+</code></pre>
+
+<p>We get the same results as before when we ran the ANOVA just on the diet dummy variables.</p>
+
+<p>Now we will manually calculate the sum of squares from the ANOVA.
+We need to get a grand mean and vector of group means</p>
+
+<pre><code class="r"># grand mean
+grand.mean&lt;-mean(coagulation$coag)
+grand.mean
+</code></pre>
+
+<pre><code>## [1] 64
+</code></pre>
+
+<pre><code class="r"># group means
+create.vector.of.means&lt;-function(my.group.data) {
+  rep(my.group.data[1],my.group.data[2])
+}
+group.mean&lt;-unlist(apply(coag.means,1,create.vector.of.means))
+group.mean
+</code></pre>
+
+<pre><code>## mean mean mean mean mean mean mean mean mean mean mean mean mean mean mean 
+##   61   61   61   61   66   66   66   66   66   66   68   68   68   68   68 
+## mean mean mean mean mean mean mean mean mean 
+##   68   61   61   61   61   61   61   61   61
+</code></pre>
+
+<p>Now that we have the grand mean and the group means, we can calculate the sum of squares:</p>
+
+<pre><code class="r">SST&lt;-sum((coagulation$coag-grand.mean)^2)
+SSE&lt;-sum((coagulation$coag-group.mean)^2)
+SSM&lt;-sum((group.mean-grand.mean)^2)
+print(SST)
+</code></pre>
+
+<pre><code>## [1] 340
+</code></pre>
+
+<pre><code class="r">print(SSE)
+</code></pre>
+
+<pre><code>## [1] 112
+</code></pre>
+
+<pre><code class="r">print(SSM)
+</code></pre>
+
+<pre><code>## [1] 228
+</code></pre>
+
+<p>Let&#39;s compare our manually created sum of squares to summary(coag.model):</p>
+
+<pre><code class="r">names(summary(coag.model))
+</code></pre>
+
+<pre><code>##  [1] &quot;call&quot;          &quot;terms&quot;         &quot;residuals&quot;     &quot;coefficients&quot; 
+##  [5] &quot;aliased&quot;       &quot;sigma&quot;         &quot;df&quot;            &quot;r.squared&quot;    
+##  [9] &quot;adj.r.squared&quot; &quot;fstatistic&quot;    &quot;cov.unscaled&quot;
+</code></pre>
+
+<pre><code class="r">names(anova(coag.model))
+</code></pre>
+
+<pre><code>## [1] &quot;Df&quot;      &quot;Sum Sq&quot;  &quot;Mean Sq&quot; &quot;F value&quot; &quot;Pr(&gt;F)&quot;
+</code></pre>
+
+<pre><code class="r">sumsq &lt;-anova(coag.model)[&quot;Sum Sq&quot;][,1]
+
+#check that SST equals:
+print(sum(sumsq))
+</code></pre>
+
+<pre><code>## [1] 340
+</code></pre>
+
+<pre><code class="r">print(SST)
+</code></pre>
+
+<pre><code>## [1] 340
+</code></pre>
+
+<pre><code class="r"># check that SSE equals
+
+print(sumsq[2] )
+</code></pre>
+
+<pre><code>## [1] 112
+</code></pre>
+
+<pre><code class="r">print(SSE)
+</code></pre>
+
+<pre><code>## [1] 112
+</code></pre>
+
+<pre><code class="r"># check that SSM equals 
+print(sumsq[1])
+</code></pre>
+
+<pre><code>## [1] 228
+</code></pre>
+
+<pre><code class="r">print(SSM)
+</code></pre>
+
+<pre><code>## [1] 228
+</code></pre>
+
+<p>Yes, our manual computation matches the anova formula.</p>
+
+<p>Check what experiment plan (basis) R uses in lm:</p>
+
+<pre><code class="r">model.matrix(coag.model)
+</code></pre>
+
+<pre><code>##    (Intercept) dietB dietC dietD
+## 1            1     0     0     0
+## 2            1     0     0     0
+## 3            1     0     0     0
+## 4            1     0     0     0
+## 5            1     1     0     0
+## 6            1     1     0     0
+## 7            1     1     0     0
+## 8            1     1     0     0
+## 9            1     1     0     0
+## 10           1     1     0     0
+## 11           1     0     1     0
+## 12           1     0     1     0
+## 13           1     0     1     0
+## 14           1     0     1     0
+## 15           1     0     1     0
+## 16           1     0     1     0
+## 17           1     0     0     1
+## 18           1     0     0     1
+## 19           1     0     0     1
+## 20           1     0     0     1
+## 21           1     0     0     1
+## 22           1     0     0     1
+## 23           1     0     0     1
+## 24           1     0     0     1
+## attr(,&quot;assign&quot;)
+## [1] 0 1 1 1
+## attr(,&quot;contrasts&quot;)
+## attr(,&quot;contrasts&quot;)$diet
+## [1] &quot;contr.treatment&quot;
+</code></pre>
+
+<p>Fit the alternative model without intercept.</p>
+
+<pre><code class="r">coag.altmodel&lt;-lm(coag~diet-1,data=coagulation)
+summary(coag.model)
+</code></pre>
+
+<pre><code>## 
+## Call:
+## lm(formula = coag ~ diet, data = coagulation)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+##  -5.00  -1.25   0.00   1.25   5.00 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 6.10e+01   1.18e+00   51.55  &lt; 2e-16 ***
+## dietB       5.00e+00   1.53e+00    3.27  0.00380 ** 
+## dietC       7.00e+00   1.53e+00    4.58  0.00018 ***
+## dietD       2.99e-15   1.45e+00    0.00  1.00000    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.37 on 20 degrees of freedom
+## Multiple R-squared:  0.671,  Adjusted R-squared:  0.621 
+## F-statistic: 13.6 on 3 and 20 DF,  p-value: 4.66e-05
+</code></pre>
+
+<p><strong>Compare ANOVA tables for coag.model and coag.altmodel. Note the difference in F-tests.</strong></p>
+
+<pre><code class="r">anova(coag.model)
+</code></pre>
+
+<pre><code>## Analysis of Variance Table
+## 
+## Response: coag
+##           Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+## diet       3    228    76.0    13.6 4.7e-05 ***
+## Residuals 20    112     5.6                    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+</code></pre>
+
+<pre><code class="r">anova(coag.altmodel)
+</code></pre>
+
+<pre><code>## Analysis of Variance Table
+## 
+## Response: coag
+##           Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## diet       4  98532   24633    4399 &lt;2e-16 ***
+## Residuals 20    112       6                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+</code></pre>
+
+<p>The F test indicates the the coag.altmodel is more significant than the coag.model. There is also one more degree of freedom in the altmodel because we used another indicator variable in place of an intercept.</p>
+
+<p>Check the basis selected for the alternative model:</p>
+
+<pre><code class="r">model.matrix(coag.altmodel)
+</code></pre>
+
+<pre><code>##    dietA dietB dietC dietD
+## 1      1     0     0     0
+## 2      1     0     0     0
+## 3      1     0     0     0
+## 4      1     0     0     0
+## 5      0     1     0     0
+## 6      0     1     0     0
+## 7      0     1     0     0
+## 8      0     1     0     0
+## 9      0     1     0     0
+## 10     0     1     0     0
+## 11     0     0     1     0
+## 12     0     0     1     0
+## 13     0     0     1     0
+## 14     0     0     1     0
+## 15     0     0     1     0
+## 16     0     0     1     0
+## 17     0     0     0     1
+## 18     0     0     0     1
+## 19     0     0     0     1
+## 20     0     0     0     1
+## 21     0     0     0     1
+## 22     0     0     0     1
+## 23     0     0     0     1
+## 24     0     0     0     1
+## attr(,&quot;assign&quot;)
+## [1] 1 1 1 1
+## attr(,&quot;contrasts&quot;)
+## attr(,&quot;contrasts&quot;)$diet
+## [1] &quot;contr.treatment&quot;
+</code></pre>
+
+<p><strong>EXPLAIN THE DIFFERENCES IN THE TWO BASES</strong>
+The first base has an intercept variable which is always one, while the altmodel base has no such variable. In its place, the altmodel has an indicator variable that indicates whether DietA is on. In this way, the altmodel constructs a &ldquo;prediction&rdquo; by adding on the effect of either dietA, dietB, dietC, or dietD onto a &ldquo;base&rdquo; of zero. THe original model&#39;s &ldquo;base&rdquo; is the mean of dietA, onto which it then adds the difference between dietsB/C/D and dietA to achieve the means of dietsB/C/D.</p>
+
+<p><strong>Answer the question:</strong></p>
+
+<p><strong>What is the null hypothesis in anova(coag.model) and how is it different from the null hypothesis of anova(coag.altmodel)?</strong>
+The null hypothesis of anova(coag.model) is: dietsB/C/D have the same means than dietA. The null hypothesis of anova(coag.altmodel) is: dietsA/B/C/D have means zero. It is natural that the null for anova(coag.altmodel) is rejected with greater significance given how the dot plot looks.</p>
+
+<hr/>
+
+<h2>Example 7.3.5</h2>
+
+<p>Show the data</p>
+
+<pre><code class="r">airpollution
+</code></pre>
+
+<pre><code>##   pollution      location
+## 1       124   Hill Suburb
+## 2       110   Hill Suburb
+## 3       107 Plains Suburb
+## 4       115 Plains Suburb
+## 5       126    Urban City
+## 6       138    Urban City
+</code></pre>
+
+<p>Calculate group means.</p>
+
+<pre><code class="r">mean(pollution~location,data=airpollution)
+</code></pre>
+
+<pre><code>##   Hill Suburb Plains Suburb    Urban City 
+##           117           111           132
+</code></pre>
+
+<p>Fit linear model and run anova.</p>
+
+<pre><code class="r">airp.model&lt;-lm(pollution~location,data=airpollution)
+anova(airp.model)
+</code></pre>
+
+<pre><code>## Analysis of Variance Table
+## 
+## Response: pollution
+##           Df Sum Sq Mean Sq F value Pr(&gt;F)
+## location   2    468   234.0    3.48   0.17
+## Residuals  3    202    67.3
+</code></pre>
+
+</body>
+
+</html>
+

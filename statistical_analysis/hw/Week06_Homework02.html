@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Week 6 Homework 2 - Design and Simulate Logisitic Regression Problem</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Week 6 Homework 2 - Design and Simulate Logisitic Regression Problem</h1>
+
+<h2>Brian Ritz</h2>
+
+<h2>MSCA 31007 Autumn 2014</h2>
+
+<p>For my problem that can be solved, I will simulate data from the following situation:</p>
+
+<p>Water is placed inside a freezer of constant temperature for 48 hours. At the end of 48 hours, the water is either observed as frozen or unfrozen, and the temperature of the freezer is taken with an unreliable thermometer. The thermometer&#39;s error can be simulated by a normal random variable with mean=0 and standard deviation = 2. I will use logistic regression to try to pinpoint the freezing point of water using 1000 repeats of the experiment.</p>
+
+<p>First we will create our simulation data.</p>
+
+<pre><code class="r"># number of samples
+nSample &lt;- 1000
+
+# outcome -- 1 for frozen, 0 for not frozen equal probability of each, although that is not necessary for the experiment
+outcome &lt;- rbinom(nSample, 1, .5)
+
+freezing.temp &lt;- 32
+
+true.temp &lt;- (runif(nSample)*5)*((outcome-.5)*-2) + freezing.temp
+meas.temp &lt;- true.temp+rnorm(nSample, 0, 2)
+
+experimental.data &lt;- data.frame(temp=meas.temp, frozen=outcome)
+
+head(experimental.data)
+</code></pre>
+
+<pre><code>##    temp frozen
+## 1 32.08      0
+## 2 32.28      0
+## 3 30.74      1
+## 4 37.47      0
+## 5 34.95      0
+## 6 27.49      1
+</code></pre>
+
+<pre><code class="r">plot(experimental.data)
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAdVBMVEX9/v0AAAAAADkAAGUAOTkAOY8AZrU5AAA5ADk5AGU5OWU5OY85j9plAABlADllAGVlOQBlZjlltbVltf2POQCPOTmPOWWPjzmPj2WP29qP2/21ZgC1/rW1/v3ajzna24/a/rXa/v39tWX924/9/rX9/tr9/v3gKd9wAAAAJ3RSTlP//////////////////////////////////////////////////wCDVpfZAAAACXBIWXMAAAsSAAALEgHS3X78AAAJbklEQVR4nO3djXaiRgBA4ZJtTLerm7aabquNbVR4/0csIGb9S4thJgzc+/WsJtnTWfQGGImEHwoh/dD3AqgfhocyPJThoQwPZXgow0MZHsrwUIaHMjyU4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0MZHsrwUIaHMjyU4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0MZHsrwUIaH6hI+U8oihu/w/yo2w0MZHsrwUIaH6hx++1DPET893zq0etU1fL6Y1/eb+5cbh1avuobfPT6f3LcfWr1yjYfqvI/fzdzHD9GHzeovDxKeHjncf/h6PPHkbriKo9vjJyA7PNrrT80H+Kjw2cW/VT8dxeEx7/8+a75aZM3f7j8/uklN8R+f1Y9u/xCK/Z/TZ6N5Ti6fmo8QKvzR5O774z77dwx/+myMIvz/DW14aHj38RlzH6/EGB6q85G7WbMZu3whb/iUdV7j88X0fUOrV9039buvy3cNrV65j4cyPJThoQwPZXgow0MZHsrwUIaHMjyU4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0MZHsrwUIaHMjyU4aEMD2V4KMNDGR7K8FCGhzI8lOGhDA9leCjDQxkeyvBQhocyPJThoQwPZXgow0N1Dr99yCbra9cbNHzSuobPn5bFelL2//Jy49DqVedLjD4+F+vpyfXjWw6tXrnGQ4XYx0/dxw+Ps3oow0OFCn80ucsO3r9Uis41HsrwUCFm9RVn9QPT+XX8Yl7fb+59HT8oIY7cHd+3H1q9co2H6ryP383cxw+Rs3oo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" alt="plot of chunk unnamed-chunk-1"/> </p>
+
+<p>Now we use the glm function to approximate a simple logistic regression.</p>
+
+<pre><code class="r">model &lt;- glm(frozen~temp, data=experimental.data, family=binomial(link=logit))
+predicted.probabilities&lt;- predict(model,type=&quot;response&quot;)
+
+plot(experimental.data$temp,predicted.probabilities)
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAh1BMVEX9/v0AAAAAADkAAGUAOTkAOWUAOY8AZrU5AAA5ADk5AGU5OWU5OY85j9plAABlADllAGVlOQBlZjllZmVltdpltf2POQCPOTmPOWWPZgCPZo+PjzmPj2WP29qP2/21ZgC124+1/rW1/v3ajzna24/a/rXa/tra/v39tWX924/9/rX9/tr9/v1Un5BBAAAALXRSTlP//////////////////////////////////////////////////////////wCl7wv9AAAACXBIWXMAAAsSAAALEgHS3X78AAAO3ElEQVR4nO2dDXviuBVG1zNtkp0NJLMtmXbahZ3Q2fDh///76i/AgAEbSSDd95xnuhC7XIQPV5KFZf2SgyS/3LsAcB8QLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQLwriRUG8KIgXBfGiIF4UxIuCeFEQL4qL+AxiJqB4h9dCaBAvCuJFQbwoiBfFWfzyqeojfn4fGhruiqv49dukelw8fAwMDXfFVfzq9X3vsX9ouCtkvCjObfxqTBufIjfr1R8PEu6PHF4cRASv3Ep8dvReWeV6o7vZvx1I3nvoP8QMffElvtW563TUT3zWbM2zZm/9d+s/fAk8EVfGDxKf8xVwIK42fmDGUwNcT2RDtpfbeOz7ITLxF2Mi3xPOI3fj5lgfn8gHP/zId8A549dvo+tCewTzw3Gv6lcv06tC+wb5g0isjb/8pm3ruD+NNfHVG5P2l7EoPj9yf8eSxIpR8fmh+/uWJULsis8PGnzYw7R41J/GuHjUn8K8+Lzt/t4liQgF8ScuEdBGQzxJf4SIeMwfoiKe6v4AHfGtqzxASzzmW0iJx/wOLfGY3yImfnu57r3LcXfUxJPzDXLiMV+jJx7zFYLit+rvXYy7oiw+3gLeAEnxmFcVT2WvKh7zquLlzcuKVzePeFF0xYubFxavbV5ZfI74kyiIj7+cIZAWr2xeW/zerfa0QLxoyouL1zWvLl62Z494UfPy4lVT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" alt="plot of chunk unnamed-chunk-2"/> </p>
+
+<p>Let&#39;s find the temperature where we expect the probability of being frozen to cross from &gt;.5 to &lt;.5.</p>
+
+<p>The probability can be expressed as a function of the temperature:
+P(frozen = 1) = 1 / (1 + e<sup>-(Intercept.coef + temp.coef*temp</sup>))</p>
+
+<p>This can be rearraged into&quot;log odds&quot;:</p>
+
+<p>ln( P(frozen=1) / (1-P(frozen=1)) ) = Intercept.coef + temp.coef*temp</p>
+
+<p>Plug in .5 for the probability and rarrange to find the temp.</p>
+
+<p>ln(1) - Intercept.coef / temp.coef= temp</p>
+
+<p>0 - Intercept.coef / temp.coef= temp</p>
+
+<p>Therefore, the temperature at which water freezes according to our estimates should be the Intercept / the temperature coefficient.</p>
+
+<pre><code class="r">summary(model)
+</code></pre>
+
+<pre><code>## 
+## Call:
+## glm(formula = frozen ~ temp, family = binomial(link = logit), 
+##     data = experimental.data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.6820  -0.4720  -0.0683   0.4879   2.7584  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  26.4821     1.6381    16.2   &lt;2e-16 ***
+## temp         -0.8286     0.0511   -16.2   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1385.62  on 999  degrees of freedom
+## Residual deviance:  686.92  on 998  degrees of freedom
+## AIC: 690.9
+## 
+## Number of Fisher Scoring iterations: 6
+</code></pre>
+
+<pre><code class="r">print(model$coefficients)
+</code></pre>
+
+<pre><code>## (Intercept)        temp 
+##     26.4821     -0.8286
+</code></pre>
+
+<pre><code class="r">est.freezing.temp &lt;- -model$coefficients[&quot;(Intercept)&quot;] / model$coefficients[&quot;temp&quot;]
+</code></pre>
+
+<p>The estimated freezing point according to our model is 31.9613. This is very close to the freezing temp we used to simulate our data &ndash; 32 degrees.</p>
+
+</body>
+
+</html>
+

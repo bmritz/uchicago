@@ -1,0 +1,7 @@
+propertyNo,street,city,postcode,type,rooms,rent,ownerNo,staffNo,branchNo
+PA14,16 Holland,Aberdeen,AB7 5SU,House,6,650,CO46,SA9,B007
+PG16,6 Argyll St,Glasglow,NW2,Flat,4,450,CO87,SL41,B005
+PG21,6 Lawrence St,Glasglow,G11 9QX,Flat,3,600,CO40,,B003
+PG36,2 Manor Rd,Glasglow,G32 4QX,Flat,3,375,CO93,SG37,B003
+PG4,18 Dale Rd,Glasglow,G12,House,5,350,CO87,SG37,B003
+PL94,5 Novar Dr,London,G12 9AX,Flat,4,400,CO93,SG14,B003

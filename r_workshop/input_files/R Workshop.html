@@ -1,0 +1,632 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>R Workshop</title>
+<meta name="Generator" content="Vim/7.3">
+<meta name="plugin-version" content="vim7.3_v6">
+<meta name="syntax" content="r">
+<meta name="magic" content="MQFCbqEaDu">
+<meta name="settings" content="use_css">
+<style type="text/css">
+<!--
+pre { font-family: monospace; color: #e8e8d3; background-color: #151515; }
+body { font-family: monospace; color: #e8e8d3; background-color: #151515; }
+.PreProc { color: #8fbfdc; }
+.Special { color: #799d6a; }
+.Type { color: #ffb964; }
+.String { color: #99ad6a; }
+.Statement { color: #8197bf; }
+.Delimiter { color: #668799; }
+.Constant { color: #cf6a4c; }
+.Structure { color: #8fbfdc; }
+.Comment { color: #888888; font-style: italic; }
+-->
+</style>
+</head>
+<body>
+<pre>
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 0: Introduction to R</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># Download and intall R.</span>
+www.r<span class="Structure">-</span>project.org <span class="Comment"># The base R with a console.</span>
+<span class="Comment"># Download and instal RStudio (optional).</span>
+www.rstudio.com <span class="Comment"># An IDE for R.</span>
+
+
+<span class="Comment"># Useful websites.</span>
+www.rdocumentation.org <span class="Comment"># R documentation.</span>
+www.r<span class="Structure">-</span>fiddle.org <span class="Comment"># Online interaction R console.</span>
+www.statmethods.net <span class="Comment"># Tutorial by Quick-R.</span>
+www.cookbook<span class="Structure">-</span>r.com <span class="Comment"># Tutorial.</span>
+www.r<span class="Structure">-</span>bloggers.com <span class="Comment"># Blog.</span>
+www.inside<span class="Structure">-</span>r.org <span class="Comment"># Blog and documentation by Revolution Analytics.</span>
+
+
+<span class="Comment"># Comparison of R with other statistical software:</span>
+<span class="Comment"># 1. SAS</span>
+<span class="Comment">#      Powerful.  Commercial support.  Not free.</span>
+<span class="Comment">#      Ugly old syntax.</span>
+<span class="Comment"># 2. STATA, SPSS</span>
+<span class="Comment">#      Easy-to-use mouse click.  Popular in social science.</span>
+<span class="Comment">#      Not a programming language.</span>
+<span class="Comment"># 3. MATLAB</span>
+<span class="Comment">#      Powerful.  Nice syntax for matrix computation.  Good documentation.</span>
+<span class="Comment">#      Popular in engineering.  Not as complete for statistical analysis.</span>
+<span class="Comment"># 4. Python + NumPy + Scipy + Panda + IPython</span>
+<span class="Comment">#      General-purpose programming language.  Free.</span>
+<span class="Comment">#      More complicated to install.  Harder to learn.</span>
+<span class="Comment"># 5. R</span>
+<span class="Comment">#      Lots of statistical tools.  A programming language.  Free</span>
+<span class="Comment">#      Cutting-edge 3rd-party packages.  Documentation can be confusing.</span>
+
+
+<span class="Comment"># What does this R Workshop teach?</span>
+<span class="Comment">#   1. Use the R Console as a calculator</span>
+<span class="Comment">#   2. Data type: number, vector, matrix, list</span>
+<span class="Comment">#   3. Import and export data.  Data frame.</span>
+<span class="Comment">#   4. Basic statistics e.g. summary, contingency table, t-test</span>
+<span class="Comment">#   5. Plotting graphs</span>
+<span class="Comment">#   6. Using packages</span>
+<span class="Comment">#   7. Basic programming syntax e.g. IF ELSE, FOR, WHILE loop, function</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 1: Using the R Console as a calculator.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># Number arithmetic.</span>
+<span class="Constant">1</span> <span class="Structure">+</span> <span class="Constant">0.2</span> <span class="Structure">*</span> <span class="Delimiter">(</span><span class="Constant">3e2</span> <span class="Structure">-</span> <span class="Constant">4</span><span class="Delimiter">)</span> <span class="Structure">/</span> <span class="Constant">5e-1</span> <span class="Comment"># Integer, decimal, and exponential number.</span>
+sqrt<span class="Delimiter">(</span><span class="Constant">3</span> <span class="Structure">**</span> <span class="Constant">2</span> <span class="Structure">+</span> <span class="Constant">4</span> <span class="Structure">^</span> <span class="Constant">2</span><span class="Delimiter">)</span> <span class="Comment"># Both ** and ^ are exponent.</span>
+                     <span class="Comment"># See also: abs, exp, log, cos, sin</span>
+
+
+<span class="Comment"># Boolean expression.</span>
+<span class="Constant">1</span> <span class="Structure">&lt;</span> <span class="Constant">2</span> <span class="Comment"># TRUE or FALSE value.</span>
+      <span class="Comment"># See also: &gt;, &gt;=, &lt;=, ==, !, !=, &amp;, |</span>
+<span class="Delimiter">(</span><span class="Constant">5</span> <span class="Structure">&gt;=</span> <span class="Constant">4</span><span class="Delimiter">)</span> <span class="Structure">&amp;</span> <span class="Delimiter">(</span><span class="Constant">1</span> <span class="Structure">!=</span> <span class="Constant">2</span><span class="Delimiter">)</span>
+
+
+<span class="Comment"># Storing value into variable.</span>
+price <span class="Structure">=</span> <span class="Constant">2</span>
+quantity <span class="Statement">&lt;-</span> <span class="Constant">3</span> <span class="Comment"># Both &lt;- and = are OK.  But &lt;- is the convention.</span>
+total <span class="Statement">&lt;-</span> price <span class="Structure">*</span> quantity
+answer <span class="Statement">&lt;-</span> total <span class="Structure">&lt;=</span> <span class="Constant">10</span>
+
+
+<span class="Comment"># Text.</span>
+question <span class="Statement">&lt;-</span> <span class="String">'What are you doing?'</span>
+response <span class="Statement">&lt;-</span> <span class="String">&quot;I'm learning R.&quot;</span> <span class="Comment"># Both ' and &quot; are OK.</span>
+
+
+<span class="Comment"># Naming of variable.</span>
+a<span class="Delimiter">,</span> b<span class="Delimiter">,</span> x<span class="Delimiter">,</span> y <span class="Comment"># Don't use &quot;c&quot; or &quot;data&quot;; they are R's keyword.</span>
+ice.cream<span class="Delimiter">,</span> ice_cream<span class="Delimiter">,</span> IceCream<span class="Delimiter">,</span> <span class="Comment"># All are OK.  The dot style is the convention.</span>
+
+
+<span class="Comment"># Current workspace i.e. stuff in the current R Console session.</span>
+ls<span class="Delimiter">()</span> <span class="Comment"># A list of existing variable names.</span>
+rm<span class="Delimiter">(</span>answer<span class="Delimiter">)</span> <span class="Comment"># Remove a variable.</span>
+<span class="Comment"># Go to File -&gt; Save Workspace... to save all variables to a .RData file.</span>
+
+
+<span class="Comment"># Help.</span>
+?c <span class="Comment"># A useful way to check if a word is R's built-in keyword or function.</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 2a: Vector.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># A vector is a sequence of items of the same type.</span>
+numbers <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="Constant">1</span><span class="Delimiter">,</span> <span class="Structure">-</span><span class="Constant">2</span><span class="Delimiter">,</span> <span class="Constant">3</span><span class="Delimiter">)</span> <span class="Comment"># Here &quot;c&quot; is a built-in function to combine items.</span>
+phones <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="String">&quot;Apple&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;Samsung&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;Nokia&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;HTC&quot;</span><span class="Delimiter">)</span>
+numbers <span class="Statement">&lt;-</span> <span class="Type">numeric</span><span class="Delimiter">(</span><span class="Constant">5</span><span class="Delimiter">)</span> <span class="Comment"># Vector of 0's.</span>
+x <span class="Statement">&lt;-</span> rep<span class="Delimiter">(</span><span class="Constant">1</span><span class="Delimiter">,</span> <span class="Constant">5</span><span class="Delimiter">)</span>
+y <span class="Statement">&lt;-</span> <span class="Constant">2</span><span class="Delimiter">:</span><span class="Constant">7</span> <span class="Comment"># Increment by 1.  Note that 7:2 is descending.</span>
+         <span class="Comment"># See also: seq</span>
+numbers <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span>x<span class="Delimiter">,</span> y<span class="Delimiter">)</span> <span class="Comment"># Concatenate two (or more) vectors together.</span>
+
+
+<span class="Comment"># Selecting items from a vector.</span>
+phones<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">]</span> <span class="Comment"># Indexing by positive integers.</span>
+phones<span class="Delimiter">[</span><span class="Constant">2</span><span class="Delimiter">:</span><span class="Constant">3</span><span class="Delimiter">]</span>
+phones<span class="Delimiter">[</span>c<span class="Delimiter">(</span><span class="Constant">4</span><span class="Delimiter">,</span><span class="Constant">1</span><span class="Delimiter">)]</span>
+phones<span class="Delimiter">[</span><span class="Structure">-</span><span class="Constant">2</span><span class="Delimiter">]</span> <span class="Comment"># Negative integers means &quot;except&quot;.</span>
+phone<span class="Delimiter">[</span><span class="Structure">-</span>c<span class="Delimiter">(</span><span class="Constant">2</span><span class="Delimiter">,</span><span class="Constant">4</span><span class="Delimiter">)]</span>
+phones<span class="Delimiter">[</span>c<span class="Delimiter">(</span><span class="Constant">TRUE</span><span class="Delimiter">,</span> <span class="Constant">FALSE</span><span class="Delimiter">,</span> <span class="Constant">TRUE</span><span class="Delimiter">,</span> <span class="Constant">FALSE</span><span class="Delimiter">)]</span> <span class="Comment"># Indexing by TRUE boolean values.</span>
+
+
+<span class="Comment"># Basic operations on vector.</span>
+length<span class="Delimiter">(</span>numbers<span class="Delimiter">)</span>
+phones <span class="Statement">&lt;-</span> sort<span class="Delimiter">(</span>phones<span class="Delimiter">)</span> <span class="Comment"># See also: order, rank</span>
+
+
+<span class="Comment"># Element-wise computation i.e. vectorization.</span>
+x <span class="Statement">&lt;-</span> <span class="Constant">1</span><span class="Delimiter">:</span><span class="Constant">5</span>
+y <span class="Statement">&lt;-</span> <span class="Constant">6</span><span class="Delimiter">:</span><span class="Constant">10</span>
+x <span class="Structure">+</span> y <span class="Comment"># Also for other binary operators e.g. -, *, /, &amp;, |</span>
+x <span class="Structure">^</span> <span class="Constant">2</span> <span class="Comment"># Same as x ^ rep(2, length(x)).</span>
+
+
+<span class="Comment"># Example.</span>
+x<span class="Delimiter">[</span>x <span class="Structure">&gt;</span> <span class="Constant">1</span> <span class="Structure">&amp;</span> y <span class="Structure">&lt;</span> <span class="Constant">10</span><span class="Delimiter">]</span> <span class="Comment"># Vectorized &gt; and &lt; and &amp;, then boolean indexing.</span>
+phones<span class="Delimiter">[</span>phones <span class="Structure">&lt;</span> <span class="String">&quot;M&quot;</span><span class="Delimiter">]</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 2b: Matrix.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># A matrix of items of the same type.</span>
+m1 <span class="Statement">&lt;-</span> <span class="Type">matrix</span><span class="Delimiter">(</span><span class="Constant">0</span><span class="Delimiter">,</span> <span class="Constant">3</span><span class="Delimiter">,</span> <span class="Constant">3</span><span class="Delimiter">)</span> <span class="Comment"># Create a matrix of 0's.</span>
+m2 <span class="Statement">&lt;-</span> <span class="Type">matrix</span><span class="Delimiter">(</span><span class="Constant">1</span><span class="Delimiter">:</span><span class="Constant">9</span><span class="Delimiter">,</span> <span class="Constant">3</span><span class="Delimiter">,</span> <span class="Constant">3</span><span class="Delimiter">,</span> byrow<span class="Structure">=</span><span class="Constant">TRUE</span><span class="Delimiter">)</span> <span class="Comment"># Fill a matrix.</span>
+m3 <span class="Statement">&lt;-</span> cbind<span class="Delimiter">(</span>m1<span class="Delimiter">,</span> m2<span class="Delimiter">)</span> <span class="Comment"># See also: rbind</span>
+
+
+<span class="Comment"># Selecting items from a matrix.</span>
+m <span class="Statement">&lt;-</span> <span class="Type">matrix</span><span class="Delimiter">(</span><span class="Constant">1</span><span class="Delimiter">:</span><span class="Constant">16</span><span class="Delimiter">,</span> <span class="Constant">4</span><span class="Delimiter">,</span> <span class="Constant">4</span><span class="Delimiter">)</span>
+m<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">,</span><span class="Constant">2</span><span class="Delimiter">]</span> <span class="Comment"># Integer indexing.</span>
+m<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">,</span><span class="Delimiter">]</span> <span class="Comment"># Omit means to select along the whole dimension.</span>
+m<span class="Delimiter">[</span><span class="Delimiter">,</span><span class="Constant">2</span><span class="Delimiter">:</span><span class="Constant">4</span><span class="Delimiter">]</span>
+m<span class="Delimiter">[</span><span class="Constant">2</span><span class="Delimiter">:</span><span class="Constant">3</span><span class="Delimiter">,</span><span class="Structure">-</span>c<span class="Delimiter">(</span><span class="Constant">1</span><span class="Delimiter">,</span><span class="Constant">4</span><span class="Delimiter">)]</span>
+m<span class="Delimiter">[</span><span class="Delimiter">,</span>m<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">,</span><span class="Delimiter">]</span> <span class="Structure">&gt;=</span> <span class="Constant">6</span><span class="Delimiter">]</span> <span class="Comment"># Boolean indexing.</span>
+
+
+<span class="Comment"># Basic operations on matrix.</span>
+dim<span class="Delimiter">(</span>m<span class="Delimiter">)</span> <span class="Comment"># See also: nrow, ncol</span>
+dim<span class="Delimiter">(</span>m<span class="Delimiter">)</span> <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="Constant">8</span><span class="Delimiter">,</span><span class="Constant">2</span><span class="Delimiter">)</span> <span class="Comment"># Reshape the matrix.</span>
+rowSums<span class="Delimiter">(</span>m<span class="Delimiter">)</span> <span class="Comment"># See also: colSums, colMeans, rowMeans</span>
+
+
+<span class="Comment"># Matrix operations.</span>
+m <span class="Statement">&lt;-</span> <span class="Type">matrix</span><span class="Delimiter">(</span><span class="Constant">1</span><span class="Delimiter">:</span><span class="Constant">6</span><span class="Delimiter">,</span> <span class="Constant">3</span><span class="Delimiter">,</span> <span class="Constant">2</span><span class="Delimiter">)</span>
+t<span class="Delimiter">(</span>m<span class="Delimiter">)</span> <span class="Comment"># Transpose.</span>
+m <span class="Structure">*</span> m <span class="Comment"># Element-wise multiplication.</span>
+t<span class="Delimiter">(</span>m<span class="Delimiter">)</span> <span class="Structure">%*%</span> m <span class="Comment"># Matrix multiplication.</span>
+m <span class="Statement">&lt;-</span> diag<span class="Delimiter">(</span><span class="Constant">3</span><span class="Delimiter">)</span> <span class="Comment"># Create a diagonal matrix of 1's.</span>
+diag<span class="Delimiter">(</span>m<span class="Delimiter">)</span> <span class="Statement">&lt;-</span> <span class="Constant">2</span> <span class="Comment"># Modify its diagonal</span>
+solve<span class="Delimiter">(</span>m<span class="Delimiter">)</span> <span class="Comment"># Matrix inverse.</span>
+<span class="Comment"># See also: eigen, svd, det</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 2c: List.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># A list is a sequence of stuff of possibly different types.</span>
+x <span class="Statement">&lt;-</span> <span class="Type">list</span><span class="Delimiter">(</span><span class="Constant">TRUE</span><span class="Delimiter">,</span> <span class="Constant">2</span><span class="Delimiter">,</span> <span class="String">&quot;Three&quot;</span><span class="Delimiter">)</span>
+movie <span class="Statement">&lt;-</span> <span class="Type">list</span><span class="Delimiter">(</span>title<span class="Structure">=</span><span class="String">&quot;Toy Story&quot;</span><span class="Delimiter">,</span> year<span class="Structure">=</span><span class="Constant">1995</span><span class="Delimiter">,</span>
+    production<span class="Structure">=</span>c<span class="Delimiter">(</span><span class="String">&quot;Walt Disney&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;Pixar&quot;</span><span class="Delimiter">))</span> <span class="Comment"># Each item has a name tag.</span>
+
+
+<span class="Comment"># Select one item from the list.</span>
+x<span class="Delimiter">[[</span><span class="Constant">2</span><span class="Delimiter">]]</span> <span class="Comment"># Indexing by integer.  Note the use of double brackets.</span>
+movie<span class="Delimiter">[[</span><span class="Constant">3</span><span class="Delimiter">]]</span>
+movie<span class="Delimiter">[[</span><span class="String">&quot;production&quot;</span><span class="Delimiter">]]</span> <span class="Comment"># Indexing by name tag.</span>
+movie<span class="Special">$</span>production <span class="Comment"># By dollar sign and name tag.</span>
+
+
+<span class="Comment"># Select a sub-list of the list.</span>
+x<span class="Delimiter">[</span><span class="Constant">2</span><span class="Delimiter">]</span> <span class="Comment"># A list with one item.</span>
+x<span class="Delimiter">[</span><span class="Constant">2</span><span class="Delimiter">:</span><span class="Constant">3</span><span class="Delimiter">]</span>
+movie<span class="Delimiter">[</span>c<span class="Delimiter">(</span><span class="String">&quot;title&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;year&quot;</span><span class="Delimiter">)]</span> <span class="Comment"># A list with two items. </span>
+
+
+<span class="Comment"># Adding items to a list.</span>
+x<span class="Delimiter">[</span><span class="Constant">4</span><span class="Delimiter">]</span> <span class="Statement">&lt;-</span> <span class="Constant">4.0</span> <span class="Comment"># By index.</span>
+x<span class="Special">$</span>five <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="String">&quot;F&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;i&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;v&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;e&quot;</span><span class="Delimiter">)</span> <span class="Comment"># By name tag.</span>
+
+
+<span class="Comment"># Removing items from a list.</span>
+movie<span class="Special">$</span>year <span class="Statement">&lt;-</span> <span class="Constant">NULL</span>
+movie<span class="Delimiter">[[</span><span class="Constant">2</span><span class="Delimiter">]]</span> <span class="Comment"># All the following items shift its position forward.</span>
+x<span class="Delimiter">[</span><span class="Constant">2</span><span class="Delimiter">:</span><span class="Constant">3</span><span class="Delimiter">]</span> <span class="Statement">&lt;-</span> <span class="Constant">NULL</span> <span class="Comment"># Remove a chunk of items.</span>
+
+
+<span class="Comment"># Basic operation on list.</span>
+length<span class="Delimiter">(</span>movie<span class="Delimiter">)</span>
+names<span class="Delimiter">(</span>movie<span class="Delimiter">)</span> <span class="Comment"># The name tags.</span>
+
+
+<span class="Comment"># Combining two lists.</span>
+y <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span>x<span class="Delimiter">,</span> movie<span class="Delimiter">)</span> <span class="Comment"># A longer list consists of items from both lists.</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 2d: Factor.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+blood.type <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="String">&quot;O&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;A&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;B&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;A&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;O&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;AB&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;A&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;B&quot;</span><span class="Delimiter">)</span>
+f <span class="Statement">&lt;-</span> factor<span class="Delimiter">(</span>blood.type<span class="Delimiter">)</span> <span class="Comment"># Convert a vector to factor with levels.</span>
+levels<span class="Delimiter">(</span>f<span class="Delimiter">)</span>
+
+
+<span class="Comment"># What exactly is the difference between blood.type and f?  Use str() to find</span>
+<span class="Comment"># out.  The str() function is a very useful tool to peek into the structure of</span>
+<span class="Comment"># a variable.</span>
+str<span class="Delimiter">(</span>blood.type<span class="Delimiter">)</span> <span class="Comment"># Just a vector of texts.</span>
+str<span class="Delimiter">(</span>f<span class="Delimiter">)</span> <span class="Comment"># It knows the 4 levels, and each item is encoded by a number.</span>
+
+
+<span class="Comment"># Why do we need factor?</span>
+<span class="Comment">#   Many statistical analyses in R understand the meaning of a factor and</span>
+<span class="Comment">#   handle it correctly.  For example, in linear regression, if you convert a</span>
+<span class="Comment">#   variable to a factor, then you don't need to create dummy 0-1 variables</span>
+<span class="Comment">#   yourself, and the ANOVA also groups all levels of a factor together</span>
+<span class="Comment">#   properly.</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 3: Import and export data.  Use of data frame.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># Current directory to import data from.</span>
+getwd<span class="Delimiter">()</span>
+
+
+<span class="Comment"># Importing CSV file into a data frame.</span>
+hflights <span class="Statement">&lt;-</span> read.csv<span class="Delimiter">(</span><span class="String">&quot;hflights.csv&quot;</span><span class="Delimiter">)</span> <span class="Comment"># See also: read.table</span>
+hflights <span class="Comment"># Your screen is probably not large enough to display it all.</span>
+head<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span> <span class="Comment"># Show the first few rows.</span>
+               <span class="Comment"># See also: tail</span>
+
+
+<span class="Comment"># Use str() to obtain an overview of the data frame.</span>
+str<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span> <span class="Comment"># By default, a column of text is treated as a factor.</span>
+
+
+<span class="Comment"># What is a data frame?</span>
+<span class="Comment"># 1. It behaves like a matrix.  But the columns can have different data types.</span>
+dim<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span>
+hflights<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">,</span><span class="Delimiter">]</span>
+hflights<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">:</span><span class="Constant">10</span><span class="Delimiter">,</span><span class="Constant">5</span><span class="Delimiter">]</span>
+<span class="Comment"># 2. It is actually a list of vectors.  Each column is one vector.</span>
+length<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span> <span class="Comment"># Same as the number of columns.</span>
+names<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span> <span class="Comment"># Titles of the columns are the name tags of the list.</span>
+hflights<span class="Special">$</span>DepTime<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">:</span><span class="Constant">10</span><span class="Delimiter">]</span>
+<span class="Comment"># (Now you understand why we learn vector, matrix, and list.)</span>
+
+
+<span class="Comment"># Select column(s) by name tag.</span>
+hflights<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">:</span><span class="Constant">10</span><span class="Delimiter">,</span> c<span class="Delimiter">(</span><span class="String">&quot;DepTime&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;ArrTime&quot;</span><span class="Delimiter">)]</span>
+
+
+<span class="Comment"># Exporting a data frame to a CSV file.</span>
+hflights.sunday <span class="Statement">&lt;-</span> hflights<span class="Delimiter">[</span>hflights<span class="Special">$</span>DayOfWeek <span class="Structure">==</span> <span class="Constant">1</span><span class="Delimiter">,</span><span class="Delimiter">]</span>
+write.csv<span class="Delimiter">(</span>hflights.sunday<span class="Delimiter">,</span> file<span class="Structure">=</span><span class="String">&quot;hflight_sunday.csv&quot;</span><span class="Delimiter">,</span> row.names<span class="Structure">=</span><span class="Constant">FALSE</span><span class="Delimiter">)</span>
+    <span class="Comment"># See ?write.csv for details about the parameters.</span>
+
+
+<span class="Comment"># Saving (any kind of) stuff to a .RData file.</span>
+save<span class="Delimiter">(</span>hflights<span class="Delimiter">,</span> file<span class="Structure">=</span><span class="String">&quot;hflights.RData&quot;</span><span class="Delimiter">)</span> <span class="Comment"># File size is much smaller than CSV file.</span>
+
+
+<span class="Comment"># Loading data from a .RData file.</span>
+rm<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span>
+load<span class="Delimiter">(</span><span class="String">&quot;hflights.RData&quot;</span><span class="Delimiter">)</span> <span class="Comment"># Much faster to load than importing CSV file.</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 4: Basic statistics.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># (Finally, we have learned enough of the boring technical stuff to perform</span>
+<span class="Comment"># some useful statistical analyses.)</span>
+hflights <span class="Statement">&lt;-</span> read.csv<span class="Delimiter">(</span><span class="String">&quot;hflights.csv&quot;</span><span class="Delimiter">)</span>
+
+
+<span class="Comment"># Task 1: Arrival delay.</span>
+arrival.delay <span class="Statement">&lt;-</span> hflights<span class="Special">$</span>ArrDelay
+summary<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">)</span> <span class="Comment"># See also: min, max, mean, median, range, quantile</span>
+sd<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">)</span> <span class="Comment"># Fail because of missing values i.e. NA.</span>
+                  <span class="Comment"># See also: var</span>
+sd<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">,</span> na.rm<span class="Structure">=</span><span class="Constant">TRUE</span><span class="Delimiter">)</span> <span class="Comment"># Ignore missing values.</span>
+
+idx <span class="Statement">&lt;-</span> which.max<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">)</span> <span class="Comment"># See also: which.min</span>
+hflights<span class="Delimiter">[</span>idx<span class="Delimiter">,</span><span class="Delimiter">]</span>
+
+
+<span class="Comment"># Task 2: Cleaning missing data.</span>
+x <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="Constant">1</span><span class="Delimiter">,</span> <span class="Constant">2</span><span class="Delimiter">,</span> <span class="Constant">NA</span><span class="Delimiter">,</span> <span class="Constant">4</span><span class="Delimiter">)</span>
+is.na<span class="Delimiter">(</span>x<span class="Delimiter">)</span>
+
+any<span class="Delimiter">(</span>is.na<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">))</span> <span class="Comment"># See also: all</span>
+sum<span class="Delimiter">(</span>is.na<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">))</span> <span class="Comment"># How many NA's are there?  TRUE is 1 and FALSE is 0.</span>
+mean<span class="Delimiter">(</span>is.na<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">))</span> <span class="Comment"># Fraction of NA's.</span>
+
+is.complete <span class="Statement">&lt;-</span> complete.cases<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span> <span class="Comment"># Vector of TRUE or FALSE.</span>
+                                        <span class="Comment"># See also: na.omit</span>
+hflights.clean <span class="Statement">&lt;-</span> hflights<span class="Delimiter">[</span>is.complete<span class="Delimiter">,</span><span class="Delimiter">]</span> <span class="Comment"># Indexing by boolean values.</span>
+c<span class="Delimiter">(</span>nrow<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span><span class="Delimiter">,</span> nrow<span class="Delimiter">(</span>hflights.clean<span class="Delimiter">))</span>
+
+
+<span class="Comment"># Task 3: Re-ordering the data.</span>
+idx <span class="Statement">&lt;-</span> order<span class="Delimiter">(</span>hflights.clean<span class="Special">$</span>Distance<span class="Delimiter">,</span> hflights.clean<span class="Special">$</span>AirTime<span class="Delimiter">)</span> <span class="Comment"># See also: rank</span>
+hflights.clean <span class="Statement">&lt;-</span> hflights.clean<span class="Delimiter">[</span>idx<span class="Delimiter">,</span><span class="Delimiter">]</span>
+
+
+<span class="Comment"># Task 4: Number of flights per airline.</span>
+<span class="Delimiter">(</span>num.carrier <span class="Statement">&lt;-</span> length<span class="Delimiter">(</span>levels<span class="Delimiter">(</span>hflights<span class="Special">$</span>UniqueCarrier<span class="Delimiter">)))</span>
+    <span class="Comment"># Use outermost (...) to display the result after the computation.</span>
+<span class="Delimiter">(</span>num.flight <span class="Statement">&lt;-</span> table<span class="Delimiter">(</span>hflights<span class="Special">$</span>UniqueCarrier<span class="Delimiter">))</span> <span class="Comment"># Count the number of items for</span>
+                                              <span class="Comment"># each factor level.</span>
+rank<span class="Delimiter">(</span><span class="Structure">-</span>num.flight<span class="Delimiter">,</span> ties.method<span class="Structure">=</span><span class="String">&quot;first&quot;</span><span class="Delimiter">)</span> <span class="Comment"># (Trivia: Who is WN?)</span>
+
+table<span class="Delimiter">(</span>hflights<span class="Special">$</span>UniqueCarrier<span class="Delimiter">,</span> hflights<span class="Special">$</span>Origin<span class="Delimiter">)</span> <span class="Comment"># Two-way contingency table.</span>
+
+
+<span class="Comment"># Task 5: Number of delay incidents per airport.</span>
+delay <span class="Statement">&lt;-</span> hflights.clean<span class="Special">$</span>DepDelay
+airport <span class="Statement">&lt;-</span> hflights.clean<span class="Special">$</span>Origin
+
+has.delay <span class="Statement">&lt;-</span> factor<span class="Delimiter">(</span>delay <span class="Structure">&gt;</span> <span class="Constant">0</span><span class="Delimiter">)</span>
+levels<span class="Delimiter">(</span>has.delay<span class="Delimiter">)</span> <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="String">&quot;On Time&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;Delay&quot;</span><span class="Delimiter">)</span> <span class="Comment"># Rename the levels.</span>
+result <span class="Statement">&lt;-</span> table<span class="Delimiter">(</span>airport<span class="Delimiter">,</span> has.delay<span class="Delimiter">)</span>
+prop.table<span class="Delimiter">(</span>result<span class="Delimiter">,</span> margin<span class="Structure">=</span><span class="Constant">1</span><span class="Delimiter">)</span> <span class="Comment"># Proportion over each row.</span>
+                             <span class="Comment"># See also: margin.table</span>
+<span class="Comment"># (So HOU has higher chance of delay than IAH.)</span>
+
+
+<span class="Comment"># Task 6: Length of (positive) delay per airport.</span>
+pos.delay.per.airport <span class="Statement">&lt;-</span> split<span class="Delimiter">(</span>delay<span class="Delimiter">[</span>delay <span class="Structure">&gt;</span> <span class="Constant">0</span><span class="Delimiter">]</span><span class="Delimiter">,</span> airport<span class="Delimiter">[</span>delay <span class="Structure">&gt;</span> <span class="Constant">0</span><span class="Delimiter">])</span>
+    <span class="Comment"># What happened above?</span>
+    <span class="Comment">#   1. Select those items from the &quot;delay&quot; and &quot;aiport&quot; vectors that</span>
+    <span class="Comment">#      correspond to a positive amount of delay.</span>
+    <span class="Comment">#   2. Split the (positive) &quot;delay&quot; vector into a list of two vectors; one</span>
+    <span class="Comment">#      for each airport.</span>
+str<span class="Delimiter">(</span>pos.delay.per.airport<span class="Delimiter">)</span>
+lapply<span class="Delimiter">(</span>pos.delay.per.airport<span class="Delimiter">,</span> summary<span class="Delimiter">)</span>
+    <span class="Comment"># What happened above?</span>
+    <span class="Comment">#   Apply the summary() function to each airport.  See ?lapply for details.</span>
+    <span class="Comment">#   It is a very useful and powerful tool.</span>
+hou.pos.delay <span class="Statement">&lt;-</span> pos.delay.per.airport<span class="Special">$</span>HOU
+iah.pos.delay <span class="Statement">&lt;-</span> pos.delay.per.airport<span class="Special">$</span>IAH
+t.test<span class="Delimiter">(</span>hou.pos.delay<span class="Delimiter">,</span> iah.pos.delay<span class="Delimiter">)</span> <span class="Comment"># Two-sample t-test.</span>
+                                     <span class="Comment"># See also: binom.test, chisq.test, etc</span>
+<span class="Comment"># (So given that there is a delay, the length of the delay is similar for both</span>
+<span class="Comment">#  HOU and IAH.)</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 5: Plotting.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># Useful websites.</span>
+www.statmethods.net<span class="Structure">/</span>graphs <span class="Comment"># Various kinds of graphs.</span>
+www.statmethods.net<span class="Structure">/</span>advgraphs <span class="Comment"># Fine-tuning and other tools.</span>
+
+
+hflights <span class="Statement">&lt;-</span> read.csv<span class="Delimiter">(</span><span class="String">&quot;hflights.csv&quot;</span><span class="Delimiter">)</span>
+hflights.clean <span class="Statement">&lt;-</span> na.omit<span class="Delimiter">(</span>hflights<span class="Delimiter">)</span>
+
+
+<span class="Comment"># Simple bar plot.</span>
+num.flight <span class="Statement">&lt;-</span> table<span class="Delimiter">(</span>hflights<span class="Special">$</span>UniqueCarrier<span class="Delimiter">)</span>
+barplot<span class="Delimiter">(</span>num.flight<span class="Delimiter">,</span>
+    main<span class="Structure">=</span><span class="String">&quot;Flight Distribution at HOU and IAH in Year 2011&quot;</span><span class="Delimiter">,</span>
+    xlab<span class="Structure">=</span><span class="String">&quot;Airline&quot;</span><span class="Delimiter">,</span>
+    ylab<span class="Structure">=</span><span class="String">&quot;Number of flights&quot;</span><span class="Delimiter">)</span>
+
+
+<span class="Comment"># Scatterplot.</span>
+n <span class="Statement">&lt;-</span> <span class="Constant">500</span> <span class="Comment"># Fewer data points just to speed it up.</span>
+x <span class="Statement">&lt;-</span> hflights.clean<span class="Special">$</span>Distance<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">:</span>n<span class="Delimiter">]</span>
+y <span class="Statement">&lt;-</span> hflights.clean<span class="Special">$</span>AirTime<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">:</span>n<span class="Delimiter">]</span>
+plot<span class="Delimiter">(</span>x<span class="Delimiter">,</span> y<span class="Delimiter">,</span>
+    main<span class="Structure">=</span><span class="String">&quot;Flight Time vs Flight Distance&quot;</span><span class="Delimiter">,</span>
+    xlab<span class="Structure">=</span><span class="String">&quot;Flight distance (in miles)&quot;</span><span class="Delimiter">,</span>
+    ylab<span class="Structure">=</span><span class="String">&quot;Flight time (in minutes)&quot;</span><span class="Delimiter">,</span>
+    pch<span class="Structure">=</span><span class="Constant">19</span><span class="Delimiter">,</span> col<span class="Structure">=</span><span class="String">&quot;blue&quot;</span><span class="Delimiter">)</span> <span class="Comment"># Shape and color of the dots.</span>
+
+
+<span class="Comment"># Multiple lines plot.</span>
+windows<span class="Delimiter">()</span> <span class="Comment"># Open a new figure window.  Mac uses quartz() and Unix uses X11().</span>
+hou.month <span class="Statement">&lt;-</span> table<span class="Delimiter">(</span>hflights<span class="Special">$</span>Month<span class="Delimiter">[</span>hflights<span class="Special">$</span>Origin <span class="Structure">==</span> <span class="String">&quot;HOU&quot;</span><span class="Delimiter">])</span>
+iah.month <span class="Statement">&lt;-</span> table<span class="Delimiter">(</span>hflights<span class="Special">$</span>Month<span class="Delimiter">[</span>hflights<span class="Special">$</span>Origin <span class="Structure">==</span> <span class="String">&quot;IAH&quot;</span><span class="Delimiter">])</span>
+hou.month <span class="Statement">&lt;-</span> hou.month <span class="Structure">/</span> hou.month<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">]</span>
+iah.month <span class="Statement">&lt;-</span> iah.month <span class="Structure">/</span> iah.month<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">]</span>
+month <span class="Statement">&lt;-</span> <span class="Constant">1</span><span class="Delimiter">:</span><span class="Constant">12</span>
+xrange <span class="Statement">&lt;-</span> range<span class="Delimiter">(</span>month<span class="Delimiter">)</span>
+yrange <span class="Statement">&lt;-</span> range<span class="Delimiter">(</span>c<span class="Delimiter">(</span>hou.month<span class="Delimiter">,</span> iah.month<span class="Delimiter">))</span>
+plot<span class="Delimiter">(</span>xrange<span class="Delimiter">,</span> yrange<span class="Delimiter">,</span> <span class="Comment"># Set the x and y range of the plot.</span>
+    main<span class="Structure">=</span><span class="String">&quot;Number of Flights per Month (HOU: blue, IAH: red)&quot;</span><span class="Delimiter">,</span>
+    xlab<span class="Structure">=</span><span class="String">&quot;Month&quot;</span><span class="Delimiter">,</span>
+    ylab<span class="Structure">=</span><span class="String">&quot;Number of flights (normalized by Jaunary)&quot;</span><span class="Delimiter">,</span>
+    type<span class="Structure">=</span><span class="String">&quot;n&quot;</span><span class="Delimiter">)</span> <span class="Comment"># But don't show the dots.</span>
+lines<span class="Delimiter">(</span>month<span class="Delimiter">,</span> hou.month<span class="Delimiter">,</span> type<span class="Structure">=</span><span class="String">&quot;b&quot;</span><span class="Delimiter">,</span> col<span class="Structure">=</span><span class="String">&quot;blue&quot;</span><span class="Delimiter">,</span> pch<span class="Structure">=</span><span class="Constant">0</span><span class="Delimiter">)</span> <span class="Comment"># Add a color curve with dot.</span>
+lines<span class="Delimiter">(</span>month<span class="Delimiter">,</span> iah.month<span class="Delimiter">,</span> type<span class="Structure">=</span><span class="String">&quot;b&quot;</span><span class="Delimiter">,</span> col<span class="Structure">=</span><span class="String">&quot;red&quot;</span><span class="Delimiter">,</span> pch<span class="Structure">=</span><span class="Constant">1</span><span class="Delimiter">)</span>
+abline<span class="Delimiter">(</span><span class="Constant">1</span><span class="Delimiter">,</span> <span class="Constant">0</span><span class="Delimiter">,</span> col<span class="Structure">=</span><span class="String">&quot;darkgray&quot;</span><span class="Delimiter">,</span> lty<span class="Structure">=</span><span class="Constant">2</span><span class="Delimiter">)</span> <span class="Comment"># Add a straight line in dash style.</span>
+
+
+<span class="Comment"># Histogram.</span>
+arrival.delay <span class="Statement">&lt;-</span> hflights.clean<span class="Special">$</span>ArrDelay
+arrival.delay <span class="Statement">&lt;-</span> arrival.delay<span class="Delimiter">[</span>arrival.delay <span class="Structure">&lt;=</span> <span class="Constant">200</span><span class="Delimiter">]</span> <span class="Comment"># Just to shorten right tail.</span>
+hist<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">,</span>
+    main<span class="Structure">=</span><span class="String">&quot;Histogram of Arrival Delay (&lt;= 200 only)&quot;</span><span class="Delimiter">,</span>
+    xlab<span class="Structure">=</span><span class="String">&quot;Arrival delay (in minutes)&quot;</span><span class="Delimiter">,</span>
+    ylab<span class="Structure">=</span><span class="String">&quot;Density&quot;</span><span class="Delimiter">,</span>
+    breaks<span class="Structure">=</span><span class="Constant">50</span><span class="Delimiter">,</span> freq<span class="Structure">=</span><span class="Constant">FALSE</span><span class="Delimiter">,</span> border<span class="Structure">=</span><span class="String">&quot;darkgrey&quot;</span><span class="Delimiter">)</span> <span class="Comment"># Number of bins and bar color.</span>
+lines<span class="Delimiter">(</span>density<span class="Delimiter">(</span>arrival.delay<span class="Delimiter">)</span><span class="Delimiter">,</span> col<span class="Structure">=</span><span class="String">&quot;red&quot;</span><span class="Delimiter">,</span> lwd<span class="Structure">=</span><span class="Constant">1.5</span><span class="Delimiter">)</span> <span class="Comment"># Add a curve for the density smoothing.</span>
+
+
+<span class="Comment"># Multiple graphs in one figure.</span>
+par<span class="Delimiter">(</span>mfrow<span class="Structure">=</span>c<span class="Delimiter">(</span><span class="Constant">2</span><span class="Delimiter">,</span><span class="Constant">2</span><span class="Delimiter">))</span> <span class="Comment"># Divide the figure into 2 rows and 2 columns, filled by row.</span>
+                  <span class="Comment"># See also: par(mfcol=...)</span>
+plot<span class="Delimiter">(</span>...<span class="Delimiter">)</span>
+plot<span class="Delimiter">(</span>...<span class="Delimiter">)</span>
+plot<span class="Delimiter">(</span>...<span class="Delimiter">)</span>
+plot<span class="Delimiter">(</span>...<span class="Delimiter">)</span>
+
+
+<span class="Comment"># Exporting figure.</span>
+<span class="Comment"># Method 1: Go to File -&gt; Save As.</span>
+<span class="Comment"># Method 2:</span>
+pdf<span class="Delimiter">(</span><span class="String">&quot;figure.pdf&quot;</span><span class="Delimiter">,</span> width<span class="Structure">=</span><span class="Constant">8</span><span class="Delimiter">,</span> height<span class="Structure">=</span><span class="Constant">5</span><span class="Delimiter">)</span> <span class="Comment"># Create a PDF file.  Width and height in inches.</span>
+barplot<span class="Delimiter">(</span>num.flight<span class="Delimiter">,</span>
+    main<span class="Structure">=</span><span class="String">&quot;Flight Distribution at HOU and IAH in Year 2011&quot;</span><span class="Delimiter">,</span>
+    xlab<span class="Structure">=</span><span class="String">&quot;Airline&quot;</span><span class="Delimiter">,</span>
+    ylab<span class="Structure">=</span><span class="String">&quot;Number of flights&quot;</span><span class="Delimiter">)</span> <span class="Comment"># Draw stuff to the file.</span>
+dev.off<span class="Delimiter">()</span> <span class="Comment"># Close the file.</span>
+
+
+<span class="Comment"># Example.</span>
+<span class="Comment"># Step 1: Prepare the data points.</span>
+n <span class="Statement">&lt;-</span> <span class="Constant">500</span> <span class="Comment"># Fewer data points just to speed it up.</span>
+x <span class="Statement">&lt;-</span> hflights.clean<span class="Special">$</span>Distance<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">:</span>n<span class="Delimiter">]</span>
+y <span class="Statement">&lt;-</span> hflights.clean<span class="Special">$</span>AirTime<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">:</span>n<span class="Delimiter">]</span>
+<span class="Comment"># Step 2: Choose some colors.</span>
+dot.color <span class="Statement">&lt;-</span> rgb<span class="Delimiter">(</span><span class="Constant">0</span><span class="Delimiter">,</span><span class="Constant">128</span><span class="Delimiter">,</span><span class="Constant">255</span><span class="Delimiter">,</span><span class="Constant">50</span><span class="Delimiter">,</span>maxColorValue<span class="Structure">=</span><span class="Constant">255</span><span class="Delimiter">)</span>
+lowess.color <span class="Statement">&lt;-</span> <span class="String">&quot;#707070&quot;</span>
+lm.color <span class="Statement">&lt;-</span> <span class="String">&quot;orange&quot;</span>
+<span class="Comment"># Step 3: Scatterplot of the data points.</span>
+plot<span class="Delimiter">(</span>jitter<span class="Delimiter">(</span>x<span class="Delimiter">,</span> amount<span class="Structure">=</span><span class="Constant">20</span><span class="Delimiter">)</span><span class="Delimiter">,</span> y<span class="Delimiter">,</span>
+    main<span class="Structure">=</span><span class="String">&quot;Flight Time vs Flight Distance&quot;</span><span class="Delimiter">,</span>
+    xlab<span class="Structure">=</span><span class="String">&quot;Flight distance (in miles)&quot;</span><span class="Delimiter">,</span>
+    ylab<span class="Structure">=</span><span class="String">&quot;Flight time (in minutes)&quot;</span><span class="Delimiter">,</span>
+    pch<span class="Structure">=</span><span class="Constant">16</span><span class="Delimiter">,</span> col<span class="Structure">=</span>dot.color<span class="Delimiter">,</span> cex<span class="Structure">=</span><span class="Constant">1.5</span><span class="Delimiter">)</span>
+<span class="Comment"># Step 4: Add a smoothing curve.</span>
+lines<span class="Delimiter">(</span>lowess<span class="Delimiter">(</span>x<span class="Delimiter">,</span> y<span class="Delimiter">,</span> f<span class="Structure">=</span><span class="Constant">0.5</span><span class="Delimiter">)</span><span class="Delimiter">,</span> lty<span class="Structure">=</span><span class="Constant">2</span><span class="Delimiter">,</span> col<span class="Structure">=</span>lowess.color<span class="Delimiter">,</span> lwd<span class="Structure">=</span><span class="Constant">1.5</span><span class="Delimiter">)</span>
+<span class="Comment"># Step 5: Add a linear regression line.</span>
+abline<span class="Delimiter">(</span>lm<span class="Delimiter">(</span>y <span class="Structure">~</span> x<span class="Delimiter">)</span><span class="Delimiter">,</span> col<span class="Structure">=</span>lm.color<span class="Delimiter">,</span> lwd<span class="Structure">=</span><span class="Constant">1.5</span><span class="Delimiter">)</span>
+<span class="Comment"># Step 6: Add a legend.</span>
+legend<span class="Delimiter">(</span>min<span class="Delimiter">(</span>x<span class="Delimiter">)</span><span class="Delimiter">,</span> max<span class="Delimiter">(</span>y<span class="Delimiter">)</span><span class="Delimiter">,</span>
+    c<span class="Delimiter">(</span><span class="String">&quot;Flight&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;Lowess smoothing&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;Linear regression&quot;</span><span class="Delimiter">)</span><span class="Delimiter">,</span>
+    col<span class="Structure">=</span>c<span class="Delimiter">(</span>rgb<span class="Delimiter">(</span><span class="Constant">0</span><span class="Delimiter">,</span><span class="Constant">128</span><span class="Delimiter">,</span><span class="Constant">255</span><span class="Delimiter">,</span><span class="Constant">200</span><span class="Delimiter">,</span>maxColorValue<span class="Structure">=</span><span class="Constant">255</span><span class="Delimiter">)</span><span class="Delimiter">,</span> lowess.color<span class="Delimiter">,</span> lm.color<span class="Delimiter">)</span><span class="Delimiter">,</span>
+    pch<span class="Structure">=</span>c<span class="Delimiter">(</span><span class="Constant">16</span><span class="Delimiter">,</span><span class="Constant">NA</span><span class="Delimiter">,</span><span class="Constant">NA</span><span class="Delimiter">)</span><span class="Delimiter">,</span> lty<span class="Structure">=</span>c<span class="Delimiter">(</span><span class="Constant">NA</span><span class="Delimiter">,</span><span class="Constant">2</span><span class="Delimiter">,</span><span class="Constant">1</span><span class="Delimiter">)</span><span class="Delimiter">,</span> lwd<span class="Structure">=</span>c<span class="Delimiter">(</span><span class="Constant">NA</span><span class="Delimiter">,</span><span class="Constant">2</span><span class="Delimiter">,</span><span class="Constant">2</span><span class="Delimiter">)</span><span class="Delimiter">,</span>
+    bty<span class="Structure">=</span><span class="String">&quot;n&quot;</span><span class="Delimiter">,</span> cex<span class="Structure">=</span><span class="Constant">0.8</span><span class="Delimiter">,</span> pt.cex<span class="Structure">=</span><span class="Constant">1.2</span><span class="Delimiter">)</span>
+<span class="Comment"># Step 7: Compute the average distance and flight time to each destination.</span>
+dest <span class="Statement">&lt;-</span> factor<span class="Delimiter">(</span>hflights.clean<span class="Special">$</span>Dest<span class="Delimiter">[</span><span class="Constant">1</span><span class="Delimiter">:</span>n<span class="Delimiter">])</span> <span class="Comment"># Re-factor to remove empty destinations.</span>
+dest.x <span class="Statement">&lt;-</span> unlist<span class="Delimiter">(</span>lapply<span class="Delimiter">(</span>split<span class="Delimiter">(</span>x<span class="Delimiter">,</span> dest<span class="Delimiter">)</span><span class="Delimiter">,</span> mean<span class="Delimiter">))</span>
+dest.y <span class="Statement">&lt;-</span> unlist<span class="Delimiter">(</span>lapply<span class="Delimiter">(</span>split<span class="Delimiter">(</span>y<span class="Delimiter">,</span> dest<span class="Delimiter">)</span><span class="Delimiter">,</span> mean<span class="Delimiter">))</span>
+<span class="Comment"># Step 8: Show destination names on the graph.</span>
+text<span class="Delimiter">(</span>jitter<span class="Delimiter">(</span>dest.x<span class="Delimiter">,</span> amount<span class="Structure">=</span><span class="Constant">100</span><span class="Delimiter">)</span><span class="Delimiter">,</span> jitter<span class="Delimiter">(</span>dest.y<span class="Delimiter">,</span> amount<span class="Structure">=</span><span class="Constant">20</span><span class="Delimiter">)</span><span class="Delimiter">,</span>
+    levels<span class="Delimiter">(</span>dest<span class="Delimiter">)</span><span class="Delimiter">,</span> cex<span class="Structure">=</span><span class="Constant">0.6</span><span class="Delimiter">,</span> col<span class="Structure">=</span><span class="String">&quot;red&quot;</span><span class="Delimiter">)</span>
+<span class="Comment"># (Trivia: Where are AUS, SAT, and HNL?)</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 6: Using packages.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># How to install additional R packages?</span>
+<span class="Comment">#   1. Go to Packages -&gt; Install package(s)...</span>
+<span class="Comment">#   2. Choose a CRAN mirror server.</span>
+<span class="Comment">#   3. Choose the package from the list, and click OK.</span>
+
+
+<span class="Comment"># Task 1: Use &quot;dplyr&quot; package to do split-apply-combine.</span>
+<span class="PreProc">library</span><span class="Delimiter">(</span>dplyr<span class="Delimiter">)</span> <span class="Comment"># Load a package that has already been installed.</span>
+hflights.clean <span class="Statement">&lt;-</span> na.omit<span class="Delimiter">(</span>read.csv<span class="Delimiter">(</span><span class="String">&quot;hflights.csv&quot;</span><span class="Delimiter">))</span>
+planes <span class="Statement">&lt;-</span> tbl_df<span class="Delimiter">(</span>hflights.clean<span class="Delimiter">)</span> %.% <span class="Comment"># Special syntax for &quot;dplyr&quot;.</span>
+    group_by<span class="Delimiter">(</span>TailNum<span class="Delimiter">)</span> %.% <span class="Comment"># Group data by airplane.  Similar to split().</span>
+    summarize<span class="Delimiter">(</span> <span class="Comment"># Compute some statistics for each airplane.  Similar to lapply(...).</span>
+        count <span class="Structure">=</span> n<span class="Delimiter">()</span><span class="Delimiter">,</span>
+        dist <span class="Structure">=</span> mean<span class="Delimiter">(</span>Distance<span class="Delimiter">)</span><span class="Delimiter">,</span>
+        delay <span class="Structure">=</span> mean<span class="Delimiter">(</span>ArrDelay<span class="Delimiter">))</span> %.%
+    filter<span class="Delimiter">(</span>count <span class="Structure">&gt;</span> <span class="Constant">20</span><span class="Delimiter">,</span> dist <span class="Structure">&lt;</span> <span class="Constant">2000</span><span class="Delimiter">)</span> <span class="Comment"># Select those rows that satisfy these criterions.</span>
+planes
+
+<span class="Comment"># Task 2: Use &quot;ggplot2&quot; package to plot.</span>
+<span class="PreProc">library</span><span class="Delimiter">(</span>ggplot2<span class="Delimiter">)</span>
+ggplot<span class="Delimiter">(</span>planes<span class="Delimiter">,</span> aes<span class="Delimiter">(</span>dist<span class="Delimiter">,</span> delay<span class="Delimiter">))</span> <span class="Structure">+</span>
+  geom_point<span class="Delimiter">(</span>aes<span class="Delimiter">(</span>size <span class="Structure">=</span> count<span class="Delimiter">)</span><span class="Delimiter">,</span> alpha <span class="Structure">=</span> <span class="Constant">1</span><span class="Structure">/</span><span class="Constant">2</span><span class="Delimiter">)</span> <span class="Structure">+</span>
+  geom_smooth<span class="Delimiter">()</span> <span class="Structure">+</span>
+  scale_size_area<span class="Delimiter">()</span>
+
+
+<span class="Comment"># Other popular packages.  See www.rdocumentation.org for more.</span>
+<span class="PreProc">library</span><span class="Delimiter">(</span>data.table<span class="Delimiter">)</span> <span class="Comment"># Very fast alternative to data.frame.</span>
+<span class="PreProc">library</span><span class="Delimiter">(</span>reshape2<span class="Delimiter">)</span>
+<span class="PreProc">library</span><span class="Delimiter">(</span>sqldf<span class="Delimiter">)</span> <span class="Comment"># Manipulate data frame using SQL syntax.</span>
+<span class="PreProc">library</span><span class="Delimiter">(</span>xts<span class="Delimiter">)</span> <span class="Comment"># Time series.</span>
+
+
+<span class="Comment"># ---------------------------------------------------------</span>
+<span class="Comment"># Section 7: Basic programming syntax.</span>
+<span class="Comment"># ---------------------------------------------------------</span>
+
+<span class="Comment"># IF ELSE statement.</span>
+x <span class="Statement">&lt;-</span> <span class="Structure">-</span><span class="Constant">3</span>
+<span class="Statement">if</span> <span class="Delimiter">(</span>x <span class="Structure">&gt;</span> <span class="Constant">0</span><span class="Delimiter">)</span> <span class="Delimiter">{</span>
+    answer <span class="Statement">&lt;-</span> <span class="String">&quot;Positive&quot;</span>
+<span class="Delimiter">}</span> <span class="Statement">else</span> <span class="Statement">if</span> <span class="Delimiter">(</span>x <span class="Structure">==</span> <span class="Constant">0</span><span class="Delimiter">)</span>  <span class="Delimiter">{</span>
+    answer <span class="Statement">&lt;-</span> <span class="String">&quot;Zero&quot;</span>
+<span class="Delimiter">}</span> <span class="Statement">else</span> <span class="Delimiter">{</span>
+    answer <span class="Statement">&lt;-</span> <span class="String">&quot;Negative&quot;</span>
+<span class="Delimiter">}</span>
+answer
+
+
+<span class="Comment"># FOR loop.</span>
+phones <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="String">&quot;Apple&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;Samsung&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;Nokia&quot;</span><span class="Delimiter">,</span> <span class="String">&quot;HTC&quot;</span><span class="Delimiter">)</span>
+<span class="Comment"># Method 1: Loop through an index.</span>
+total <span class="Statement">&lt;-</span> <span class="Constant">0</span>
+<span class="Statement">for</span> <span class="Delimiter">(</span>i <span class="Statement">in</span> <span class="Constant">1</span><span class="Delimiter">:</span>length<span class="Delimiter">(</span>phones<span class="Delimiter">))</span> <span class="Delimiter">{</span>
+    print<span class="Delimiter">(</span>i<span class="Delimiter">)</span>
+    total <span class="Statement">&lt;-</span> total <span class="Structure">+</span> nchar<span class="Delimiter">(</span>phones<span class="Delimiter">[</span>i<span class="Delimiter">])</span>
+<span class="Delimiter">}</span>
+<span class="Comment"># Method 2: Loop through the items themselves.</span>
+total <span class="Statement">&lt;-</span> <span class="Constant">0</span>
+<span class="Statement">for</span> <span class="Delimiter">(</span>phone <span class="Statement">in</span> phones<span class="Delimiter">)</span> <span class="Delimiter">{</span>
+    print<span class="Delimiter">(</span>phone<span class="Delimiter">)</span>
+    total <span class="Statement">&lt;-</span> total <span class="Structure">+</span> nchar<span class="Delimiter">(</span>phone<span class="Delimiter">)</span>
+<span class="Delimiter">}</span>
+<span class="Comment"># (But the simplest way is sum(nchar(phones)).  Think vectorization!)</span>
+
+
+<span class="Comment"># WHILE loop.</span>
+x <span class="Statement">&lt;-</span> <span class="Constant">5</span>
+<span class="Statement">while</span><span class="Delimiter">(</span>x <span class="Structure">&gt;</span> <span class="Constant">0</span><span class="Delimiter">)</span> <span class="Delimiter">{</span>
+    x <span class="Statement">&lt;-</span> x <span class="Structure">-</span> <span class="Constant">1</span>
+    print<span class="Delimiter">(</span>paste<span class="Delimiter">(</span><span class="String">&quot;x:&quot;</span><span class="Delimiter">,</span> x<span class="Delimiter">))</span> <span class="Comment"># See also: paste0</span>
+<span class="Delimiter">}</span>
+
+
+<span class="Comment"># Simple Function.</span>
+hitchhiker <span class="Statement">&lt;-</span> <span class="Type">function</span><span class="Delimiter">(</span>x<span class="Delimiter">)</span> <span class="Delimiter">{</span>
+    <span class="Statement">if</span> <span class="Delimiter">(</span>x <span class="Structure">==</span> <span class="Constant">42</span><span class="Delimiter">)</span> <span class="Delimiter">{</span>
+        <span class="Statement">return</span><span class="Delimiter">(</span>x<span class="Delimiter">)</span>
+    <span class="Delimiter">}</span> <span class="Statement">else</span> <span class="Delimiter">{</span>
+        <span class="Statement">return</span><span class="Delimiter">(</span><span class="Constant">42</span><span class="Delimiter">)</span>
+    <span class="Delimiter">}</span>
+<span class="Delimiter">}</span>
+
+hitchhiker<span class="Delimiter">(</span><span class="Constant">2</span><span class="Delimiter">)</span>
+
+
+<span class="Comment"># Function with parameter that has default value.</span>
+random.password <span class="Statement">&lt;-</span> <span class="Type">function</span><span class="Delimiter">(</span>n<span class="Delimiter">,</span> choice<span class="Structure">=</span>c<span class="Delimiter">(</span><span class="Constant">letters</span><span class="Delimiter">,</span> <span class="Constant">LETTERS</span><span class="Delimiter">))</span> <span class="Delimiter">{</span> <span class="Comment"># See ?letters.</span>
+    <span class="Statement">if</span> <span class="Delimiter">(</span>n <span class="Structure">&lt;=</span> <span class="Constant">0</span><span class="Delimiter">)</span> <span class="Delimiter">{</span>
+        <span class="Statement">return</span><span class="Delimiter">(</span><span class="Constant">NULL</span><span class="Delimiter">)</span> <span class="Comment"># NULL represents the empty object in R.</span>
+    <span class="Delimiter">}</span>
+    password <span class="Statement">&lt;-</span> paste0<span class="Delimiter">(</span>sample<span class="Delimiter">(</span>choice<span class="Delimiter">,</span> n<span class="Delimiter">)</span><span class="Delimiter">,</span> collapse<span class="Structure">=</span><span class="String">&quot;&quot;</span><span class="Delimiter">)</span> <span class="Comment"># See ?sample.</span>
+    <span class="Statement">return</span><span class="Delimiter">(</span>password<span class="Delimiter">)</span>
+<span class="Delimiter">}</span>
+
+random.password<span class="Delimiter">(</span><span class="Constant">10</span><span class="Delimiter">)</span> <span class="Comment"># Use default value.</span>
+random.password<span class="Delimiter">(</span><span class="Constant">10</span><span class="Delimiter">,</span> <span class="Constant">0</span><span class="Delimiter">:</span><span class="Constant">9</span><span class="Delimiter">)</span> <span class="Comment"># Use 0 to 9 instead.</span>
+
+
+<span class="Comment"># Functin that returns more than one stuff.</span>
+five.number.summary <span class="Statement">&lt;-</span> <span class="Type">function</span><span class="Delimiter">(</span>x<span class="Delimiter">)</span> <span class="Delimiter">{</span>
+    m1 <span class="Statement">&lt;-</span> min<span class="Delimiter">(</span>x<span class="Delimiter">)</span>
+    q1 <span class="Statement">&lt;-</span> quantile<span class="Delimiter">(</span>x<span class="Delimiter">,</span> <span class="Constant">0.25</span><span class="Delimiter">,</span> names<span class="Structure">=</span><span class="Constant">FALSE</span><span class="Delimiter">)</span>
+    q2 <span class="Statement">&lt;-</span> median<span class="Delimiter">(</span>x<span class="Delimiter">)</span>
+    q3 <span class="Statement">&lt;-</span> quantile<span class="Delimiter">(</span>x<span class="Delimiter">,</span> <span class="Constant">0.75</span><span class="Delimiter">,</span> names<span class="Structure">=</span><span class="Constant">FALSE</span><span class="Delimiter">)</span>
+    m2 <span class="Statement">&lt;-</span> max<span class="Delimiter">(</span>x<span class="Delimiter">)</span>
+    <span class="Statement">return</span><span class="Delimiter">(</span><span class="Type">list</span><span class="Delimiter">(</span>minimum<span class="Structure">=</span>m1<span class="Delimiter">,</span> first.quartile<span class="Structure">=</span>q1<span class="Delimiter">,</span> median<span class="Structure">=</span>q2<span class="Delimiter">,</span> third.quartile<span class="Structure">=</span>q3<span class="Delimiter">,</span>
+        maximum<span class="Structure">=</span>m2<span class="Delimiter">))</span> <span class="Comment"># Put all the stuff in a list.  Then return one list.</span>
+<span class="Delimiter">}</span>
+
+x <span class="Statement">&lt;-</span> c<span class="Delimiter">(</span><span class="Constant">0.6</span><span class="Delimiter">,</span> <span class="Constant">1.7</span><span class="Delimiter">,</span> <span class="Constant">0.4</span><span class="Delimiter">,</span> <span class="Structure">-</span><span class="Constant">0.3</span><span class="Delimiter">,</span> <span class="Structure">-</span><span class="Constant">0.3</span><span class="Delimiter">,</span> <span class="Constant">0.2</span><span class="Delimiter">,</span> <span class="Structure">-</span><span class="Constant">0.2</span><span class="Delimiter">,</span> <span class="Structure">-</span><span class="Constant">1.5</span><span class="Delimiter">,</span> <span class="Constant">1.6</span><span class="Delimiter">,</span> <span class="Constant">1.5</span><span class="Delimiter">)</span>
+result <span class="Statement">&lt;-</span> five.number.summary<span class="Delimiter">(</span>x<span class="Delimiter">)</span>
+result
+result<span class="Special">$</span>first.quartile
+
+</pre>
+</body>
+</html>
