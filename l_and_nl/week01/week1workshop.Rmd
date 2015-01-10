@@ -1,0 +1,140 @@
+---
+title: "Workshop1"
+author: "Brian Ritz"
+date: "Saturday, January 10, 2015"
+output: html_document
+---
+Week 1 Workshop: Comparison of LM() and GLM()
+Objective
+
+1. Learn how to fit the classical linear model in the framework of generalized linear model glm().
+2. Compare the outputs of lm() and glm() and understand the differences between them.
+
+
+Load the data to the project:
+```{r}
+Linear.Model.Data<-read.csv(file="Week1ProjectData.csv",header=TRUE,sep=",")
+Linear.Model.Data[1:10,]
+Linear.Model.Data.Frame<-as.data.frame(Linear.Model.Data)
+```
+
+
+Now we fit linear model using lm() and glm()
+
+```{r}
+Linear.Model.Data.lm<-lm(Output~Input,data=Linear.Model.Data.Frame)
+Linear.Model.Data.glm<-glm(Output~Input,family=gaussian(link="identity"),data=Linear.Model.Data.Frame)
+```
+
+Names of the lm():
+```{r}
+names(Linear.Model.Data.lm)
+```
+
+Names of the glm()
+```{r}
+names(Linear.Model.Data.glm)
+```
+
+Summary of lm():
+```{r}
+summary(Linear.Model.Data.lm)
+```
+
+Summary of glm():
+```{r}
+summary(Linear.Model.Data.glm)
+```
+
+**COMPARE MODEL OBJECTS**
+
+1. Compare coefficients
+
+Coefficients of the lm():
+```{r}
+coefficients(Linear.Model.Data.glm)
+```
+
+Coefficients of the glm():
+```{r}
+coefficients(Linear.Model.Data.glm)
+```
+
+2. Compare Residuals
+
+Residuals of the lm():
+```{r}
+residuals(Linear.Model.Data.lm)
+```
+
+Residuals of the glm():
+```{r}
+residuals(Linear.Model.Data.glm)
+```
+
+Comparison, check if they are equal:
+```{r}
+all.equal(residuals(Linear.Model.Data.lm), residuals(Linear.Model.Data.glm))
+```
+
+The residuals are EQUAL!
+
+3. Compare fitted values
+
+Fitted values of lm():
+```{r}
+fitted.values(Linear.Model.Data.lm)
+```
+
+Fitted values of glm():
+```{r}
+fitted.values(Linear.Model.Data.glm)
+```
+
+Comparison, check if they are equal:
+```{r}
+all.equal(fitted.values(Linear.Model.Data.lm), fitted.values(Linear.Model.Data.glm))
+```
+
+The fitted values are also EQUAL!
+
+
+4. Linear Predictions
+
+Linear Predictions for lm():
+```{r}
+predict(Linear.Model.Data.lm)
+```
+
+Linear Predictions for glm():
+```{r}
+predict(Linear.Model.Data.glm)
+```
+
+Comparison of predictions:
+```{r}
+all.equal(predict(Linear.Model.Data.glm), predict(Linear.Model.Data.lm))
+```
+
+The predictions are EQUAL!
+
+5. Deviance
+
+Deviance of lm():
+```{r}
+deviance(Linear.Model.Data.lm)
+```
+
+deviance of glm():
+```{r}
+deviance(Linear.Model.Data.glm)
+```
+
+The deviances are also EQUAL!
+
+NOW, lets calculate the deviance manually:
+
+```{r}
+
+```
+
