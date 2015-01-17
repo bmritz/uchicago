@@ -1,0 +1,76 @@
+---
+title: "Week 2 Workshop"
+author: "Brian Ritz"
+date: "Saturday, January 17, 2015"
+output: html_document
+---
+
+**Non-Linear Optimization and Maximum Likelihood Estimation**
+*This project helps understanding non-linear optimization techniques and their aplication to maximum likelihood estimation.*
+
+Define the function that we will use to get the log likelihood of a parameter 
+```{r}
+Negative.LL.Normal <- function(param.vector, sample){
+  n<-length(sample)
+  term.1 <- (n/2)* log(2*pi*param.vector[2])
+  term.2 <- (1/(2*param.vector[2]))*(sum((sample-param.vector[1])^2))
+  LL <- term.1 + term.2
+  return(LL)
+}
+```
+
+
+read in the data
+```{r}
+Norm.Sample.Vector<-read.csv("sample_for_optimization.csv")
+Norm.Sample.Vector <- Norm.Sample.Vector[,1]
+
+# LL.Normal.Instance(s.vector){
+#   function(param.vector){
+#     Negative.LL.Normal(param.vector, s.vector)
+#   }
+# }
+```
+
+test the function
+```{r}
+Negative.LL.Normal(c(7,4), Norm.Sample.Vector)
+```
+
+
+```{r}
+Optimized.Negative.Log.Likelihood.optim<-optim(c(7,4),
+                                               Negative.LL.Normal,
+                                               sample=Norm.Sample.Vector,
+                                               method="L-BFGS-B",
+                                               hessian=TRUE,
+                                               lower=c(-Inf,0),
+                                               control=list(trace=1))
+```
+
+get outputs of the optim
+```{r}
+names(Optimized.Negative.Log.Likelihood.optim)
+Optimized.Negative.Log.Likelihood.optim$par
+Optimized.Negative.Log.Likelihood.optim$value
+Optimized.Negative.Log.Likelihood.optim$counts
+Optimized.Negative.Log.Likelihood.optim$convergence
+Optimized.Negative.Log.Likelihood.optim$message
+Optimized.Negative.Log.Likelihood.optim$hessian
+```
+
+Make a contour plot
+
+```{r}
+#Plot the objective function
+Data.To.Plot.x<-seq(from=5,to=15,length.out=50)
+Data.To.Plot.y<-seq(from=15,to=35,length.out=50)
+
+
+Term.1<-length(Norm.Sample.Vector)/2*outer(log(2*pi*Data.To.Plot.y),rep(1,length(Data.To.Plot.y)))
+Term.2<-outer(rep(1,length(Data.To.Plot.x)),unlist(lapply(Data.To.Plot.x,FUN=function(vector.element,Data.Vector) sum((Data.Vector-vector.element)^2),Norm.Sample.Vector)))*outer(1/2/Data.To.Plot.y,rep(1,length(Data.To.Plot.y)))
+  
+Negative.Log.Likelihood.Data<-Term.1+Term.2
+filled.contour(Data.To.Plot.x,Data.To.Plot.y,Negative.Log.Likelihood.Data,color.palette=rainbow,nlevels=20)
+```
+

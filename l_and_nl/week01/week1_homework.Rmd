@@ -96,13 +96,40 @@ Now, I calculate deviance manually in the function `calc.deviance()`, and then u
 ```{r}
 # use manual calculation of deviance
 
-calc.deviance<- function(glmfit){
-  sum((glmfit$y - glmfit$fitted.values)^2)
+
+# we need a gaussian log likelihood function -- after we estimate, we can find the log likelihood function only from the residuals
+LL.Normal <- function(residuals){
+  n<-length(residuals)
+  sigma.sq <- sd(residuals)^2
+  #sigma.sq <- mean(residuals^2)
+  term.1 <- -(n/2)* log(2*pi*sigma.sq)
+  term.2 <- -(1/(2*sigma.sq))*(sum((residuals)^2))
+  
+  LL <- term.1 + term.2
+  return(LL)
 }
 
+calc.deviance<- function(glmfit){
+  
+  # the estaimation of variance of the Normal distribution underlying the sample is the same as the variance of the residuals
+  
+  # even for the saturated model, we can still estimate the variance of the y's with the residuals of the errors of the glm -- with the saturate model we estimate perfectly the ys, so the sd of the residuals will be zero, but, the sd of the estimates in that case will equal the sd of the residuals in the non-saturated case
+  
+  sigma.sq <- var(glmfit$residuals)
+  n <- length(glmfit$residuals)
+
+  # the saturated models residuals are all zeros, so we can simlify the log-likelihood function to the following:
+  saturated <- -(n/2) * log(2*pi*sigma.sq)
+  
+  estimated <- LL.Normal(glmfit$residuals)
+  dev <- 2*sigma.sq*(saturated - estimated)
+  return(dev)
+}
+
+all.equal(linear.model.sse, calc.deviance(Linear.Model.Data.lm))
 all.equal(linear.model.sse, calc.deviance(Returned.from.glm))
 ```
-They are equal!
+Very small difference, essentially they are equal.
 
 
 **6. Akaike Information Criterion**
@@ -118,15 +145,43 @@ calc.AIC<- function(fit){
   # find the p -- number of paramters
   p<-length(fit$coefficients)
   
-  # need estimate of variance
-  linear.model.sse/(nrow(Linear.Model.Data)-2)
-  
-  
-  
-  # likelihood function 
-  like <- -(p/2)* log(2*pi*)
+  aic <- -2 * LL.Normal(fit$residuals) + (2*p)
+
+  return(aic)
 }
+
+all.equal(AIC(Returned.from.glm), calc.AIC(Linear.Model.Data.lm))
+```
+They are not equal, but they are close...I haven't found out why yet-could be that there are a few different formulas for AIC:
+[linked phrase](http://www.researchgate.net/post/What_is_the_AIC_formula)
+
+
+**7. Y**
+
+The models were estimated on the same data, so the whys will be the same
+```{r}
+all.equal(Returned.from.glm$y, Linear.Model.Data[,1], check.attributes = FALSE)
 ```
 
 
+**8. Null Deviance**
 
+Null deviance is the deviance of the null model, when p = 1. So we will feed into our deviance function the residuals of when we compare the Ys to Ybar -- vector of (Yi-Ybar)
+
+
+```{r}
+# first we fit a null model
+null.model <- lm(Output~1, data=Linear.Model.Data)
+calc.deviance(null.model)
+Returned.from.glm$null.deviance
+all.equal(calc.deviance(null.model), Returned.from.glm$null.deviance)
+```
+
+**9. Dispersion**
+
+```{r}
+summary(Returned.from.glm)
+sum(Linear.Model.Data.lm$residuals^2) / Linear.Model.Data.lm$df.residual
+```
+The dispersion is roughly equal to the square of residual standard error.
+The two dispersions are equal -- we can see the glm dispersion in the summary, and the dispersion calculated from the linear model residuals below it.
