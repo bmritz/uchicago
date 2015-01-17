@@ -1,0 +1,132 @@
+---
+title: "Homework Week 1"
+author: "Brian Ritz"
+date: "Friday, January 16, 2015"
+output: html_document
+---
+
+Use the data from the file `Week1_Homework_Project_Data.csv` to estimate linear model with `lm()`. Analize `summary()` of the estimated linear model.
+
+What can you tell about the data and the fit?
+
+By using any variables returned by `lm()` or `summary(lm.fit)` calculate the following characteristics of `glm()` that you would obtain if applied `glm()` to the same data.
+
+You use glm() to check your answers, but, please, do not use glm object or any functions applied to glm object to calculate your results.
+
+```{r}
+Linear.Model.Data <- read.csv(file="Week1_Homework_Project_Data.csv",header=TRUE,sep=",")
+head(Linear.Model.Data)
+```
+
+
+Estimate the model with `lm()`:
+```{r}
+Linear.Model.Data.lm<-lm(Output~Input1+Input2+Input3,data=Linear.Model.Data)
+summary(Linear.Model.Data.lm)
+```
+
+
+Now we estimate using `glm()` so we can check:
+```{r}
+Returned.from.glm<-glm(Output~Input1+Input2+Input3,family=gaussian(link="identity"),data=Linear.Model.Data)
+names(Returned.from.glm)
+```
+
+
+**1. Coefficients**
+
+Coefficients will be the same even though lm() estimates using partial least squares and glm() estimates using maximum likelihood. This is because when we find the maximum of the log-likelihood function:
+
+`-(n/2)* ln(2*pi*variance) * (1/(-2*variance)) * summation((yi - mu)^2)`
+
+by varying mu, mu will equal the mean of all of the yi's. When we maximize that function by varying the variance, we get (1/n)*(summation(y-ybar)^2).
+
+The coefficients for `glm()`:
+```{r}
+coefficients(Linear.Model.Data.lm)
+```
+
+
+**2. Residuals**
+
+Residuals for `lm()` will be the same as `glm()`. This is because the glm and lm() models will have the same coefficients, therefore they will give the same estimates, therefore they will give the same residuals.
+
+Check finding the residuals from both:
+```{r}
+matplot(1:length(Linear.Model.Data[,1]),cbind(Linear.Model.Data.lm$residuals,Returned.from.glm$residuals),type="l",ylab="Residuals",xlab="Count")
+```
+
+What is the difference between the two lines?
+Are any of the differences above a trivial small amount (due to how the computer stores decimals)?
+```{r}
+any(abs(Linear.Model.Data.lm$residuals-Returned.from.glm$residuals)>.00000000001)
+```
+NOPE!
+
+
+**3. Fitted Values**
+Since we've already seen that the coefficients are the same, it would follow that the fitted values are the same as well because we are fitting the same data using the same coefficients.
+
+```{r}
+all.equal(fitted.values(Linear.Model.Data.lm), fitted.values(Returned.from.glm))
+```
+We have assered that the two vectors are equal.
+
+
+**4. Linear Predicators**
+Again, because we have proven that the coefficients are the same, they will provied the same predicitons when applied to the same data as long as the link function is the identity function, which it is in this case. We check tha the linear predictors vectors are equal below:
+
+```{r}
+all.equal(Linear.Model.Data.lm$fitted.values, Returned.from.glm$linear.predictors)
+```
+
+The linear.predictors property of the `glm` object will not always be equal to the fitted values of the `lm()` or even the fitted values of the `glm()`, because the link function will not always be the identiy function.
+
+
+**5. Deviance**
+We will check that the deviance for the `glm()` is equal to the sum of squared errors of the linear model. We will first do this using deviance() and then manually calculating deviance using the definitions in the lecture.
+
+```{r}
+# use deviance()
+linear.model.sse <- sum(Linear.Model.Data.lm$residuals^2)
+all.equal(linear.model.sse, deviance(Returned.from.glm))
+```
+
+Now, I calculate deviance manually in the function `calc.deviance()`, and then use that function to again assert that the deviance is equal to the lm sse. The function from the lecture is Summation((yI - fittedvalueI)^2) over all ys and fitted I's -- you will notice that this is the same formual as the SSE.
+```{r}
+# use manual calculation of deviance
+
+calc.deviance<- function(glmfit){
+  sum((glmfit$y - glmfit$fitted.values)^2)
+}
+
+all.equal(linear.model.sse, calc.deviance(Returned.from.glm))
+```
+They are equal!
+
+
+**6. Akaike Information Criterion**
+We will calculate the aic both using the `AIC()` function and manually using the formula from the lecture.
+
+```{r}
+all.equal(AIC(Linear.Model.Data.lm), AIC(Returned.from.glm))
+```
+The AIC from both are equal, using the `AIC()` function. Now I will calucluate the AIC manually and use that to compare to the Linear model aic.
+
+```{r}
+calc.AIC<- function(fit){
+  # find the p -- number of paramters
+  p<-length(fit$coefficients)
+  
+  # need estimate of variance
+  linear.model.sse/(nrow(Linear.Model.Data)-2)
+  
+  
+  
+  # likelihood function 
+  like <- -(p/2)* log(2*pi*)
+}
+```
+
+
+
