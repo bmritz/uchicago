@@ -1,23 +1,71 @@
+---
+title: "Week 3 Homework"
+author: "Brian Ritz"
+date: "Friday, January 30, 2015"
+output: html_document
+---
+
+
+---
+Week 3 Homework Assignment: Analysis of Non-Linear Dependencies
+---
+
+Data in the file Week3_Homework_Project_Data.csv contain observations of time during the day when people watch TV (are logged in to an internet site, active online, etc.) and their age.
+
+Read in data:
+```{r}
 Age.Time.Sample<-read.csv(file="Week3_Homework_Project_Data.csv",header=TRUE,sep=",")
 Age.Time.Sample<-as.matrix(Age.Time.Sample)
 Age.Time.Sample[1:10,]
 
-
-# there looks like there might be two clusters
 plot(Age.Time.Sample)
+```
 
+There looks like there might be two clusters here.
 
+```{r}
 # Once you rank,the clusters disappear a little bit
 plot(rank(Age.Time.Sample[,1])/length(Age.Time.Sample[,1]),rank(Age.Time.Sample[,2])/length(Age.Time.Sample[,1]))
 
-
-#
+# check out the correlation
 c(cor(Age.Time.Sample)[1,2],cor(Age.Time.Sample)[1,2]^2)
 
+```
+
+Now, lets look at the histograms for the samples.
+
+```{r}
 hist(Age.Time.Sample[,1])
 hist(Age.Time.Sample[,2])
 
+```
 
+**Interpret the initial observations**
+
+**1. What do you see on the scatterplot of Age vs. Time?**
+  
+I see two clusters one, at the upper right centered at about 40 years old and maybe 23 Time, and the other at about 25 years old Age and 21 Time. The first cluster(40, 23) looks like it has more observations in it.
+
+**2. What does the empirical copula suggest?**
+
+The dependence and the clusters are less evident, but still look like they are present. It lookslike there is positive correlation, because it appears that there are observations missing from the upper left and lower right corners of the copula.
+
+**3. How significant is the amount of correlation?**
+
+There is a moderate relationship between the data. The relationship decreases when a monotonic function(square function) is applied to the data. The correlation coefficient is .43 for the untransformed variables and .19 for the transformed variables.
+
+**4. What do you imply from the shapes of the histograms?**
+
+The shapes of the histograms make it look like there is a bimodal distribution of Age, centered around 45 and 25. The histogram for Time looks like it has a fat-tail on the left. It is skewed left. This may be indicitive that there is actually two normal data generating processes with means near to eachother underlying this sample.
+
+
+--
+Clustering Of the data
+--
+
+Find possible clusters of the values.
+
+```{r}
 library(mclust)
 
 # use Mclust() to cluster the age component and the time component
@@ -30,14 +78,23 @@ Age.Clusters$parameters
 Age.Clusters.Parameters<-rbind(mu=Age.Clusters$parameters$mean,
                                sigma=sqrt(Age.Clusters$parameters$variance$sigmasq),
                                pro=Age.Clusters$parameters$pro)
+```
 
+The G and parameters match what is given in the homework description.
 
+We now use norMix to analyze the mixed Gaussian models.
+
+```{r}
 library(nor1mix)
 Classified.Mix.Model.Age <- norMix(Age.Clusters.Parameters["mu",], 
                                    sigma=Age.Clusters.Parameters["sigma",],
                                    w=Age.Clusters.Parameters["pro",])
 plot(Classified.Mix.Model.Age,xout=seq(from=10,to=60,by=.25),p.norm=TRUE,p.comp=TRUE)
+```
 
+Now let's move on to the time clusters.
+
+```{r}
 # Now on to time clusters
 Time.Clusters<-Mclust(data=Age.Time.Sample[,2], modelNames="V")
 names(Time.Clusters)
@@ -54,7 +111,11 @@ Time.Clusters$parameters
 Time.Clusters.Parameters<-rbind(mu=Time.Clusters$parameters$mean,
                                 sigma=sqrt(Time.Clusters$parameters$variance$sigmasq),
                                 pro=Time.Clusters$parameters$pro)
+```
 
+Make a norMix object for time:
+
+```{r}
 # make a normix object
 
 Classified.Mix.Model.Time <- norMix(Time.Clusters.Parameters["mu",], 
@@ -62,11 +123,16 @@ Classified.Mix.Model.Time <- norMix(Time.Clusters.Parameters["mu",],
                                    w=Time.Clusters.Parameters["pro",])
 
 plot(Classified.Mix.Model.Time,xout=seq(from=18,to=26,by=.25),p.norm=TRUE,p.comp=TRUE)
+```
+
+I was right, the means for the two normal distributions are fairly close to eachother; and the distributions overlap for most of their density.
 
 
+---
+Separate samples into clusters and explore dependencies
+---
 
-# separate samples into clusters and explore their dependencies
-
+```{r}
 #separate samples and explore dependencies
 Age.Mixing.Sequence<-Age.Clusters$classification
 Age.25.Time.21.Mixing.Sequence<-((Age.Clusters$classification==1)&(Time.Clusters$classification==1))
@@ -94,25 +160,46 @@ matplot(Age.Time.Sample[,1],cbind(Grouped.Data.Age.25.Time.21[,2],
         col=c('black','red', 'blue', 'green'))
 legend('topleft', c("Age.25.Time.21","Age.25.Time.23","Age.45.Time.21","Age.45.Time.23") , 
        lty=1,lwd=3, col=c('black','red', 'blue', 'green'), bty='n', cex=.75)
+```
 
-# Group the samples by age and by time and explore the dependencies within groups.
+**What dependencies do you see on the chart?**
+It lookslike within the age45 time 23 cluster, there is a positive dependency. Within age 25s, there does not appear to be much dependency. For Age 45 time 21, there seem to be not as many observations as one would expect at the lower right hand corner, so we may see some dependence there.
+
+
+LOOK AT DEPENDENCIES:
+
+Group by age:
+
+```{r}
 #Group by age
 Grouped.Data.Age.25<-cbind(Age=rep(NA,200),Time=rep(NA,200))
 Grouped.Data.Age.25[Age.Clusters$classification==1,]<-Age.Time.Sample[Age.Clusters$classification==1,]
 Grouped.Data.Age.45<-cbind(Age=rep(NA,200),Time=rep(NA,200))
 Grouped.Data.Age.45[Age.Clusters$classification==2,]<-Age.Time.Sample[Age.Clusters$classification==2,]
+```
+
+
+
+```{r}
 plot(rank(na.omit(Grouped.Data.Age.25[,1]))/length(na.omit(Grouped.Data.Age.25[,1])),
      rank(na.omit(Grouped.Data.Age.25[,2]))/length(na.omit(Grouped.Data.Age.25[,2])),
      xlab="Age 25 Group: Age",ylab="Age 25 Group: Time")
 
 cor(na.omit(Grouped.Data.Age.25),method="spearman")[1,2]
+```
 
+```{r}
 plot(rank(na.omit(Grouped.Data.Age.45[,1]))/length(na.omit(Grouped.Data.Age.45[,1])),
      rank(na.omit(Grouped.Data.Age.45[,2]))/length(na.omit(Grouped.Data.Age.45[,2])),
      xlab="Age 45 Group: Age",ylab="Age 45 Group: Time")
 
 cor(na.omit(Grouped.Data.Age.45),method="spearman")[1,2]
 
+```
+
+Now group by time:
+
+```{r}
 #Group by Time
 Grouped.Data.Time.21<-cbind(Age=rep(NA,200),Time=rep(NA,200))
 Grouped.Data.Time.21[Time.Clusters$classification==1,]<-
@@ -120,18 +207,33 @@ Grouped.Data.Time.21[Time.Clusters$classification==1,]<-
 Grouped.Data.Time.23<-cbind(Age=rep(NA,200),Time=rep(NA,200))
 Grouped.Data.Time.23[Time.Clusters$classification==2,]<-
   Age.Time.Sample[Time.Clusters$classification==2,]
+```
+
+```{r}
 plot(rank(na.omit(Grouped.Data.Time.21[,1]))/length(na.omit(Grouped.Data.Time.21[,1])),
      rank(na.omit(Grouped.Data.Time.21[,2]))/length(na.omit(Grouped.Data.Time.21[,2])),
      xlab="Time 21 Group: Age",ylab="Time 21 Group: Time")
 
 cor(na.omit(Grouped.Data.Time.21),method="spearman")[1,2]
+```
 
+The copula looks pretty uniform here, possibly slightly less observations up to the left. Along with the small correlation (.17) the evidence for dependence is not very strong.
+
+```{r}
 plot(rank(na.omit(Grouped.Data.Time.23[,1]))/length(na.omit(Grouped.Data.Time.23[,1])),
      rank(na.omit(Grouped.Data.Time.23[,2]))/length(na.omit(Grouped.Data.Time.23[,2])),
      xlab="Time 23 Group: Age",ylab="Time 23 Group: Time")
 
 cor(na.omit(Grouped.Data.Time.23),method="spearman")[1,2]
+```
 
+**What do you infer from the groupings by age and time?**
+The correlation coefficients are moderate .2 and .17, so there is moderate to low correlation within groups. The empirical copulas appear pretty uniform, so there is not much dependence evident there.
+
+
+Group by age and time:
+
+```{r}
 #Group by Age and Time
 #Grouped.Data.Age.25.Time.21
 plot(rank(na.omit(Grouped.Data.Age.25.Time.21[,1]))/length(na.omit(Grouped.Data.Age.25.Time.21[,1])),
@@ -139,31 +241,48 @@ plot(rank(na.omit(Grouped.Data.Age.25.Time.21[,1]))/length(na.omit(Grouped.Data.
      xlab="Time 21 Group: Age",ylab="Time 21 Group: Time")
 
 cor(na.omit(Grouped.Data.Age.25.Time.21),method="spearman")[1,2]
+```
 
+Copula is pretty sparse and uniformly distributed. Correlation coefficient is low--evidence for dependence is weak.
+
+```{r}
 #Grouped.Data.Age.25.Time.23
 plot(rank(na.omit(Grouped.Data.Age.25.Time.23[,1]))/length(na.omit(Grouped.Data.Age.25.Time.23[,1])),
      rank(na.omit(Grouped.Data.Age.25.Time.23[,2]))/length(na.omit(Grouped.Data.Age.25.Time.23[,2])),
      xlab="Time 21 Group: Age",ylab="Time 21 Group: Time")
 
 cor(na.omit(Grouped.Data.Age.25.Time.23),method="spearman")[1,2]
+```
 
+There looks to be a modest amount of correlation in the copula, and the correlation coefficient is higher than wev'e seen so far in this analysis. There is moderate evidence for dependence here
 
-
+```{r}
 #Grouped.Data.Age.45.Time.21
 plot(rank(na.omit(Grouped.Data.Age.45.Time.21[,1]))/length(na.omit(Grouped.Data.Age.45.Time.21[,1])),
      rank(na.omit(Grouped.Data.Age.45.Time.21[,2]))/length(na.omit(Grouped.Data.Age.45.Time.21[,2])),
      xlab="Time 21 Group: Age",ylab="Time 21 Group: Time")
 
 cor(na.omit(Grouped.Data.Age.45.Time.21),method="spearman")[1,2]
+```
 
+Correlation coefficient is slightly negative, which I guessed when first looking at the scatterplot earlier. However, it is still near 0, and the copula looks pretty uniform.
+
+```{r}
 #Grouped.Data.Age.45.Time.23
 plot(rank(na.omit(Grouped.Data.Age.45.Time.23[,1]))/length(na.omit(Grouped.Data.Age.45.Time.23[,1])),
      rank(na.omit(Grouped.Data.Age.45.Time.23[,2]))/length(na.omit(Grouped.Data.Age.45.Time.23[,2])),
      xlab="Time 21 Group: Age",ylab="Time 21 Group: Time")
 
 cor(na.omit(Grouped.Data.Age.45.Time.23),method="spearman")[1,2]
+```
+
+Copula again looks pretty uniform, so the evidence for dependence is low. Correlation coefficient is 0.08 which is also not indicitive of dependence.
 
 
+
+Use copula to fit Gaussian copula to the groups Age.25.Time.23 and Age.45.Time.21.
+
+```{r}
 library(copula)
 
 data.to.copula<- pobs(na.omit(Grouped.Data.Age.25.Time.23), ties.method = "average")
@@ -173,6 +292,21 @@ pobs(na.omit(Grouped.Data.Age.25.Time.23), ties.method = "average")
 
 data.to.copula<- pobs(na.omit(Grouped.Data.Age.45.Time.21), ties.method = "average")
 Gaussian.Copula.Age.45.Time.21.fit<-fitCopula(normalCopula(), data.to.copula, method="ml")
+
+```
+
+**Compare the correlations of the parametric models for both groups with Spearman correlations estimated earlier**
+
+```{r}
+Gaussian.Copula.Age.25.Time.23.fit
+cor(na.omit(Grouped.Data.Age.25.Time.23),method="spearman")[1,2]
+```
+
+```{r}
 Gaussian.Copula.Age.45.Time.21.fit
+cor(na.omit(Grouped.Data.Age.45.Time.21),method="spearman")[1,2]
+```
+
+The Rho parameter is further away from zero than the spearman correlation coefficients. The parametric models indicate that the data is more correlated than the spearman coefficients would.
 
 
