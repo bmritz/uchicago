@@ -1,0 +1,12 @@
+---
+title: "Week 04 Homewrok"
+author: "Brian Ritz"
+date: "Tuesday, February 03, 2015"
+output: html_document
+---
+
+I chose to study the survival rates of people on the RMS Titanic on April 15, 1912.  April 15 marks the infamous maritime disaster in which over 1,500 people lost their lives in the cold, vast Atlantic Ocean after the Titanic struck an iceburg and disappeared below the waves in the span of just 2 hours.
+
+I will determine the probability of any one passenger surviving as a function of their sex, age, and fare paid for the trip.
+
+I found my data on [Kaggle](https://www.kaggle.com/c/titanic-gettingStarted), a website for data analysis competitions.
