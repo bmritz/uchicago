@@ -1,0 +1,55 @@
+---
+title: "Week 05 Homework"
+author: "Brian Ritz"
+date: "Friday, February 13, 2015"
+output: html_document
+---
+
+** POISSON REGRESSION AND NEGATIVE BINOMIAL REGRESSION **
+
+Import the file:
+```{r}
+measles.data<-read.csv(file="MeaslesImmunizationCoverageAndOutbreaks.csv")
+measles.data<-as.data.frame(measles.data)
+```
+
+We will fit the poisson model-- the link function for a poisson model is the log function.
+
+```{r, echo=FALSE}
+measles.poisson.model<-glm(Outbreaks~Coverage,family=poisson,data=measles.data)
+names(measles.poisson.model)
+summary(measles.poisson.model)
+```
+
+We will get the linear predictors from the model object:
+
+```{r}
+measles.poisson.model$linear.predictors
+```
+
+THe linear predictors are the log of the fitted values. Below, we compare the outbreaks with the fitted values.
+```{r}
+rbind(measles.data$Outbreaks,measles.poisson.model$fitted.values)
+```
+
+I will show that the link is logrithmic:
+
+```{r}
+rbind(log(measles.poisson.model$fitted.values), measles.poisson.model$linear.predictors)
+```
+
+
+What would happen if the coverage changes by 1%?
+```{r}
+## coverage change in percentage points
+(1-exp(measles.poisson.model$coef[2]*.01))*100
+```
+
+** NEGATIVE BINOMIAL REGRESSION **
+
+```{r}
+library(MASS)
+neg.bin.regression.model <- glm.nb(Outbreaks ~ Coverage, data = measles.data, init.theta = 2934552)
+summary(neg.bin.regression.model)
+```
+

@@ -56,4 +56,4 @@ summary(logit.link.model)
 exp(coef(logit.link.model)["Sexmale"])
 ```
 
-Here we see that sex and Fare both play somewhat of a role in predicting whether a passenger will survive the Titanic catastrophe. I conclude that being male made it less likely to survive the disaster. Specifically, being a male reduced your chances of surviving to `exp(coef(logit.link.model)["Sexmale"])` of what it would be if you were female. Likewise, for every dollar increase in your fare, you were `exp(coef(logit.link.model)["Fare"])` times as likely to survive.
+Here we see that sex and Fare both play somewhat of a role in predicting whether a passenger will survive the Titanic catastrophe. I conclude that being male made it less likely to survive the disaster. Specifically, being a male reduced your chances of surviving to `r exp(coef(logit.link.model)["Sexmale"])` of what it would be if you were female. Likewise, for every dollar increase in your fare, you were `r exp(coef(logit.link.model)["Fare"])` times as likely to survive.
