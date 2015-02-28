@@ -32,11 +32,14 @@ drop1(poisson.model)
 Drop1() tests the significance of factors by dropping it from the model, and comparing the AIC from the full model with the model without the dropped term. We see our output that the model is just slightly better without the Preference term.
 
 **Estimate a binomial model**
-
+Binomial model
+I create 2 groups and check if they have the same probability of success.
 ```{r}
-library(pscl)
-library(MASS)
-summary(binomial.model<-glm.nb(y~Gender+Preference, Beverage.Preference))
+(binomial.matrix<-matrix(y,nrow=2))
+binomial.model<-glm(binomial.matrix~1,family=binomial)
+summary(binomial.model)
 ```
 
-The negative binomial model gives the same output as the poisson model. This is a clue that there is not overdispersion in our model, and the theta term of the negative binomial is not needed.
+The binomial model tests the hypothesis that the there is no effect of male/female on the coffee/tea decision.
+
+To test for homogeneity I also fit the null model (the numll model suggests that the probability of being male is the same whether you like coffee or tea). The null deviance is similar to the residual deviance in this case, suggesting that there is homogeneity in the dataset.
