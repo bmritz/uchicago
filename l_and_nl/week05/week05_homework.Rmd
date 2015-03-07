@@ -27,7 +27,7 @@ We will get the linear predictors from the model object:
 measles.poisson.model$linear.predictors
 ```
 
-THe linear predictors are the log of the fitted values. Below, we compare the outbreaks with the fitted values.
+The linear predictors are the log of the fitted values. Below, we compare the outbreaks with the fitted values.
 ```{r}
 rbind(measles.data$Outbreaks,measles.poisson.model$fitted.values)
 ```
@@ -37,7 +37,6 @@ I will show that the link is logrithmic:
 ```{r}
 rbind(log(measles.poisson.model$fitted.values), measles.poisson.model$linear.predictors)
 ```
-
 
 What would happen if the coverage changes by 1%?
 ```{r}
@@ -53,3 +52,6 @@ neg.bin.regression.model <- glm.nb(Outbreaks ~ Coverage, data = measles.data, in
 summary(neg.bin.regression.model)
 ```
 
+The negative binomial regression also finds that coverage is significantly negatively correlated with the frequency of cases of Measles. The coefficient on coverage estimated by the negative binomial model is  -0.7828 -- the same as for the poisson model. The standard error of the poisson estimate for the coefficient on coverage is 0.1963, the negative binomial's standard error is the same--0.1963. The deviances are also roughly equal...just 0.002 difference.
+
+I can conclude that the poisson model is appropriate for this data.

@@ -1,0 +1,250 @@
+---
+title: "Course Project"
+author: "Brian Ritz"
+date: "Saturday, February 14, 2015"
+output: html_document
+---
+
+1. Problem Description
+
+The business analytics group of a company is asked to investigate causes of malfunctions in technological process of one of the manufacturing plants that result in significantly increased cost to the end product of the business.
+One of suspected reasons for malfunctions is deviation of temperature during the process from optimal levels. The sample in the provided file contains times of malfunctions in seconds since the start of measurement and minute records of temperature.
+
+
+2. Data -- Read in and prepare the data:
+```{r}
+
+Course.Project.Data<-read.csv(file="../input/MScA_LinearNonLinear_MalfunctionData.csv")
+Course.Project.Data<-as.data.frame(Course.Project.Data)
+Course.Project.Data[1:20,]
+dim(Course.Project.Data)
+```
+
+
+3. Create Counting Process, Explore Cumulative Intensity
+```{r}
+Counting.Process<-as.data.frame(cbind(Time=Course.Project.Data$Time,Count=1:length(Course.Project.Data$Time)))
+Counting.Process[1:20,]
+```
+
+```{r}
+plot(Counting.Process$Time,Counting.Process$Count,type="s")
+```
+
+
+3.1 Explore the Cumulative intensity of the process
+
+Cumulative intensity is calculated as the number of events between time zero and t divided by t. 
+```{r}
+plot(Counting.Process$Time,Counting.Process$Count/Counting.Process$Time,type="l",ylab="Cumulative Intensity")
+abline(h=Counting.Process$Count[length(Counting.Process$Count)]/
+         Counting.Process$Time[length(Counting.Process$Time)])
+abline(h=mean(Counting.Process$Count/Counting.Process$Time))
+```
+
+```{r}
+c(Last.Intensity=Counting.Process$Count[length(Counting.Process$Count)]/
+         Counting.Process$Time[length(Counting.Process$Time)],
+  Mean.Intensity=mean(Counting.Process$Count/Counting.Process$Time))
+```
+
+4. Check for overdispersion
+
+Make 60 minute windows  -- how many counts are there in each one minute window...one dot is one observation for a 60 minute period.
+```{r}
+Event.Counts<-hist(ceiling(Counting.Process$Time/60), breaks=15000/60)$counts
+
+cut((cut(Counting.Process$Time, seq(0,15000, 60))), 15000/60)
+plot(Event.Counts)
+```
+
+4.1 Methods for testing overdispersion:
+
+4.1.1 Quick and dirty method.
+Look at the output of glm() and compare the residual deviance with the number of degrees of freedom.
+If the assumed model is correct deviance is asymptotically distributed as Chi-squared (X2) with degrees of freedom n−k where n is the number of observations and k is the number of parameters.
+For Chi-squared distribution X2 distribution the mean is the number of degrees of freedom n−k.
+If the residual deviance returned by glm() is greated than n−k then it might be a sign of overdispersion.
+
+if no overdipersion -- then expectation of deviance should be near the residual degress of freedom -- if we divide both and there is no overdispersion, then we should get something near 1.
+
+Test the method on simulated Poisson data.
+```{r}
+
+# use distribution that we know is poisson and test function will give us what we think
+Test.Deviance.Overdispersion.Poisson<-function(Sample.Size,Parameter.Lambda){
+  my.Sample<-rpois(Sample.Size,Parameter.Lambda) # get poisson dist
+  Model<-glm(my.Sample~1,family=poisson) # fit poisson wth only intercept
+  Dev<-Model$deviance  # get deviance
+  Deg.Fred<-Model$df.residual # get deg freedom
+  
+  # create confidence interval -- and retrun if the deg freedom is within this confidence interval
+  (((Dev/Deg.Fred-1)/sqrt(2/Deg.Fred)>-1.96)&((Dev/Deg.Fred-1)/sqrt(2/Deg.Fred)<=1.96))*1
+} 
+
+# return 1 if confidence interval does cover "0" in the interval, 0 if it does not
+Test.Deviance.Overdispersion.Poisson(100,1)
+```
+
+
+```{r}
+sum(replicate(300,Test.Deviance.Overdispersion.Poisson(100,1)))
+```
+
+
+```{r}
+exp(glm(rpois(1000,2)~1,family=poisson)$coeff)
+```
+
+
+Same test on negative binomial data:
+
+```{r}
+Test.Deviance.Overdispersion.NBinom<-function(Sample.Size,Parameter.prob){
+  my.Sample<-rnbinom(Sample.Size,2,Parameter.prob)
+  Model<-glm(my.Sample~1,family=poisson)
+  Dev<-Model$deviance
+  Deg.Fred<-Model$df.residual
+  (((Dev/Deg.Fred-1)/sqrt(2/Deg.Fred)>-1.96)&((Dev/Deg.Fred-1)/sqrt(2/Deg.Fred)<=1.96))*1
+} 
+sum(replicate(300,Test.Deviance.Overdispersion.NBinom(100,.2)))
+
+```
+
+Apply the test to one minute counts
+```{r}
+GLM.model<-glm(Event.Counts~1,family=poisson)
+GLM.model
+```
+The residual deviance is about 6 times n-k (the degrees of freedom). This is a signal of overdispersion.
+
+
+4.1.2 Regression test by Cameron-Trivedi
+
+This first tests that dispersiontest gives us the expected results. Then we use the dispersiontest to test GLM.model.
+```{r}
+library(AER)
+
+Test.Deviance.Overdispersion.Poisson.AER<-function(Sample.Size,Parameter.Lambda){
+  my.Sample<-rpois(Sample.Size,Parameter.Lambda) # get poisson dist
+  Model<-glm(my.Sample~1,family=poisson) # fit poisson wth only intercept
+  Disp.Test <- dispersiontest(Model)
+  return(Disp.Test)
+} 
+
+Test.Deviance.Overdispersion.Poisson.AER(100, .2)
+
+Disp.Test <- dispersiontest(GLM.model)
+Disp.Test
+
+```
+
+4.1.3 Test against Negative Binomial Distribution
+The null hypothesis of this test is that the distribution is Poisson as particular case of Negative binomial against Negative Binomial. 
+
+```{r}
+library(MASS)
+library(pscl)
+```
+
+Test the validitiy of the odtest.
+
+```{r}
+Test.Deviance.Overdispersion.Poisson.pscl<-function(Sample.Size,Parameter.Lambda){
+  my.Sample<-rpois(Sample.Size,Parameter.Lambda) # get poisson dist
+  my.Sample <- data.frame(myy=my.Sample)
+  print(my.Sample)
+  Model<-glm.nb(myy~1, data=my.Sample) # fit poisson wth only intercept
+  odtest.sample <- odTest(Model)
+#   return(odtest.sample)
+} 
+
+Test.Deviance.Overdispersion.Poisson.pscl(100, 5)
+
+
+```
+
+Use odTest to test the glm.nb model created by the mass package 
+```{r}
+GLM.model.nb<-glm.nb(Event.Counts~1)
+GLM.model.nb
+odTest(GLM.model.nb)
+
+```
+
+
+# fit negative binomials, and test which negative binomial it is likely to be -- if it is general negative binomial, then it is not poisson, but, we may find that it is a poisson that fits the best
+
+# small p value -- reject if it is poisson
+
+Test.Deviance.Overdispersion.NBinom.pscl<-function(Sample.Size,Parameter.prob){
+  my.Sample<-rnbinom(Sample.Size,2,Parameter.prob)
+  Model<-glm.nb(my.Sample~1)
+  
+# this function compares the log likelihoods of a negative binomial model and the poissom model
+  odtest.sample <- odTest(Model)
+  return(odtest.sample)
+} 
+Test.Deviance.Overdispersion.NBinom.pscl(100, .2)
+
+
+
+5. Distribution of the Poisson Intensity
+Kolmlgorov-Smirnov test -- tests if samples come from same distribution
+
+
+```{r}  
+library(lattice)
+library(latticeExtra)
+```
+
+```{r}
+sample1=rnorm(100)
+sample2=rnorm(100,1,2)
+Cum.Distr.Functions <- data.frame(sample1,sample2)
+ecdfplot(~ sample1 + sample2, data=Cum.Distr.Functions, auto.key=list(space='right'))
+```
+```{r}
+ks.test(sample1,sample2)
+```
+
+Check eqiovalence of empirical distribution of sample1 and theoretical distribution Norm(0,1).
+The null hypothesis is that the distributions are the same.
+```{r}
+ks.test(sample1,"pnorm",mean=0,sd=1)
+```
+
+Check equivalence of the empirical distribution of sample2 and theoretical distribution Norm(0,1).
+```{r}
+ks.test(sample2,"pnorm",mean=0,sd=1)
+```
+
+
+5.2. Check the distribution for the entire period.
+if it is a poisson distribution, then the time intervals between malfunctions should be exponential
+```{r}
+time.differences <- diff(Counting.Process$Time)
+ks.test(time.differences, "pexp", rate=1/mean(time.differences))
+
+# plot a CDF of the time differences
+ecdfplot(~ time.differences)
+```
+
+5.3. Check distribution of one-minute periods
+
+Use at least 5 different candidates for distribution of Poisson intensity of malfunctions.
+
+Find one-minute intensities.
+
+```{r}
+# event intensities are the counts of observations in each 1 minute period
+hist(Event.Intensities)
+```
+
+
+For the gamma distribution find the parameters by the method of moments -- then ks test the gamma with those parameters against the sample
+
+Gamma distribution will not allow you to reject the hypothesis
+
+find other 2 -- 1 worked well one 
+gamma dist for the intensity means negative binomial for the counts

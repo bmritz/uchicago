@@ -1,0 +1,83 @@
+---
+title: "week08_homework"
+author: "Brian Ritz"
+date: "Saturday, March 07, 2015"
+output: html_document
+---
+
+
+Look at the data:
+```{r}
+MarketingData<-read.csv(file="MarketingExperiment.csv",header=TRUE,sep=",")
+MarketingData<-as.data.frame(MarketingData)
+MarketingData[1:10,]
+```
+
+```{r}
+plot(MarketingData$Time,MarketingData$Probability, type="p",pch=19,xlab="Time",ylab="Probability")
+```
+
+Estimate a linear model and check out the output:
+```{r}
+summary(MarketingData.EstimatedLinearModel<-lm(Probability~Time,data=MarketingData))
+print(names(MarketingData.EstimatedLinearModel))
+print(MarketingData.EstimatedLinearModel$coefficients)
+```
+
+** INTERPRET THE RESULTS OF THE OUTPUT**
+
+Time coefficient is significant and positive. I interpret the coefficient as meaning the following: for a one unit of time increase the probability increases by just under 4 percentage points. The p-value is very small, so we are confident that this coefficient is different from zero
+
+We now check out the residuals of the model:
+
+```{r}
+EstimatedResiduals<-MarketingData.EstimatedLinearModel$residuals
+plot(MarketingData$Time,EstimatedResiduals)
+```
+
+It looks like there might be two groups with means just above and below 0, but lets check out the distributions compared the the normal distribution to be sure:
+```{r}
+Probability.Density.Residuals<-density(EstimatedResiduals)
+plot(Probability.Density.Residuals,ylim=c(0,10))
+lines(Probability.Density.Residuals$x,dnorm(Probability.Density.Residuals$x,mean=mean(EstimatedResiduals),sd=sd(EstimatedResiduals)))
+```
+
+It looks like there is a "hole" around the mean of the distribution! Perhaps there are actually two groups! It is possible that these two groups are the male/female groups, so lets fit a fixed effect on gender and see if that helps the pattern of the residuals. We will compare the two summaries:
+
+```{r}
+summary(MarketingData.LinearModel.Gender<-lm(Probability~Time+Gender,data=MarketingData))
+summary(MarketingData.EstimatedLinearModel)
+```
+
+The time coefficients are exactly the same, but the genderM coefficient in the gender model is also significant with a coefficient of -.07, meaning that on average being male makes you probability 7 percentage points less.
+
+
+Now, we will fit a random effects model with lmer() from lme4:
+
+```{r}
+library(lme4)
+MarketingData.Time.Random.Effect<-lmer(Time~1+(1|Gender),data=MarketingData)
+summary(MarketingData.Time.Random.Effect)
+```
+
+WE can see from the summary that variance within the groups is much less than the variance between the groups. We know this because the variance on the gender group is much less than the variance on the residual group.
+
+```{r}
+summary(MarketingData.Time.Random.Effect)$coefficients
+```
+
+```{r}
+summary(MarketingData.Time.Random.Effect)$sigma
+```
+
+
+Now we apply lmer() to fit the model with one predictor Time and one random effect based on Gender:
+```{r}
+summary(Marketing.Data.Random.Effect<-lmer(Probability ~ Time + (1 | Gender), data=MarketingData))
+```
+
+
+** COMPARE THE SUMMARIES OF THE RANDOM EFFECT MODEL WITH THE ORIGINAL LINEAR MODEL **
+
+IN the random effects model, the fixed effect on time is very nearly the same as the linear model's coefficient on time. The standard error for the fixed effect time in the random effect model is less than the standard error for the linear model because some of that variance was taken up by the random effect. The residual standard error for hte linear model is higher than the residual standard deviation, meaning that there is less residual error in the random effects model. The t-value of the random effects model also indicates that time is still a significant predictor of probability.
+

@@ -1,0 +1,45 @@
+---
+title: "Week09 Homework"
+author: "Brian Ritz"
+date: "Saturday, March 07, 2015"
+output: html_document
+---
+
+
+```{r}
+HIV.Protease.Data<-read.csv(file="HIV_Protease.csv",header=TRUE,sep=",")
+HIV.Protease.Data<-as.data.frame(HIV.Protease.Data)
+head(HIV.Protease.Data)
+table(HIV.Protease.Data$CODON_2)
+```
+
+Show a histogram of the viral loads of the Dataset when CODON_2 = caa:
+
+```{r, echo=FALSE}
+HIV.Protease.Data.caa.VL<-subset(HIV.Protease.Data$VL,HIV.Protease.Data$CODON_2=="caa")
+hist(HIV.Protease.Data.caa.VL)
+```
+
+
+Show a histogram of the viral loads of the Dataset when CODON_2 = cag:
+
+```{r, echo=FALSE}
+HIV.Protease.Data.cag.VL<-subset(HIV.Protease.Data$VL,HIV.Protease.Data$CODON_2=="cag")
+hist(HIV.Protease.Data.cag.VL)
+```
+
+We will run a model to determine if a change from caa to cag will play a significant role in the failure of the drug.
+
+First we compare the means:
+```{r}
+c(mean(HIV.Protease.Data.cag.VL),mean(HIV.Protease.Data.caa.VL))
+```
+
+Fit a linear model:
+```{r}
+lm.CODON_2.VL <- lm(VL~CODON_2, data=HIV.Protease.Data)
+AIC(lm.CODON_2.VL)
+anova(lm.CODON_2.VL)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
