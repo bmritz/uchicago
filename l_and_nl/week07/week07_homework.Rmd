@@ -1,0 +1,45 @@
+---
+title: "Week 7 Homework"
+author: "Brian Ritz"
+output: html_document
+---
+
+The contingency table that we created Saturday shows counts of preferences for tea or coffee cross-classified according to whether the responder is a male or a female.
+
+```{r}
+y<-c(8,4,5,2)
+Gender<-gl(2,1,4,labels=c("Male","Female"))
+Preference<-gl(2,2,labels=c("Coffee","Tea"))
+Beverage.Preference<-data.frame(y,Gender,Preference)
+Beverage.Preference
+```
+
+We see just by eyeing the table that there are more males than females, and there is an overall preference for coffee over tea, but there does not appear to be an interaction.
+
+**Estimate a poisson model**
+
+```{r}
+summary(poisson.model<-glm(y~Gender+Preference, Beverage.Preference, family=poisson ))
+```
+
+The null model (the hypothesis that all four observations happen at the same rate) may fit the model reasonably well because the deviance of the model is 4.01 with 3 degress of freedom. Neither predictor is significant at the .1 p-value, although gender is close.
+
+```{r}
+# apply drop 1 to one of the factors
+drop1(poisson.model)
+```
+
+Drop1() tests the significance of factors by dropping it from the model, and comparing the AIC from the full model with the model without the dropped term. We see our output that the model is just slightly better without the Preference term.
+
+**Estimate a binomial model**
+Binomial model
+I create 2 groups and check if they have the same probability of success.
+```{r}
+(binomial.matrix<-matrix(y,nrow=2))
+binomial.model<-glm(binomial.matrix~1,family=binomial)
+summary(binomial.model)
+```
+
+The binomial model tests the hypothesis that the there is no effect of male/female on the coffee/tea decision.
+
+To test for homogeneity I also fit the null model (the numll model suggests that the probability of being male is the same whether you like coffee or tea). The null deviance is similar to the residual deviance in this case, suggesting that there is homogeneity in the dataset.
