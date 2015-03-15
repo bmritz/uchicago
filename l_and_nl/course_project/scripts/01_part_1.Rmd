@@ -54,7 +54,6 @@ Make 60 minute windows  -- how many counts are there in each one minute window..
 ```{r}
 Event.Counts<-hist(ceiling(Counting.Process$Time/60), breaks=15000/60)$counts
 
-cut((cut(Counting.Process$Time, seq(0,15000, 60))), 15000/60)
 plot(Event.Counts)
 ```
 
@@ -63,8 +62,8 @@ plot(Event.Counts)
 4.1.1 Quick and dirty method.
 Look at the output of glm() and compare the residual deviance with the number of degrees of freedom.
 If the assumed model is correct deviance is asymptotically distributed as Chi-squared (X2) with degrees of freedom n−k where n is the number of observations and k is the number of parameters.
-For Chi-squared distribution X2 distribution the mean is the number of degrees of freedom n−k.
-If the residual deviance returned by glm() is greated than n−k then it might be a sign of overdispersion.
+For Chi-squared distribution the mean is the number of degrees of freedom n−k.
+If the residual deviance returned by glm() is greater than n−k then it might be a sign of overdispersion.
 
 if no overdipersion -- then expectation of deviance should be near the residual degress of freedom -- if we divide both and there is no overdispersion, then we should get something near 1.
 
@@ -121,6 +120,7 @@ The residual deviance is about 6 times n-k (the degrees of freedom). This is a s
 
 4.1.2 Regression test by Cameron-Trivedi
 
+Use the AER package to test the hypothesis that the variance is equal to the mean.
 This first tests that dispersiontest gives us the expected results. Then we use the dispersiontest to test GLM.model.
 ```{r}
 library(AER)
@@ -138,6 +138,8 @@ Disp.Test <- dispersiontest(GLM.model)
 Disp.Test
 
 ```
+Given the p-value of < 2.2e-16, we reject the null hypothesis that the mean is equal to the variace, this is consistent with our earlier findings.
+
 
 4.1.3 Test against Negative Binomial Distribution
 The null hypothesis of this test is that the distribution is Poisson as particular case of Negative binomial against Negative Binomial. 
@@ -149,20 +151,6 @@ library(pscl)
 
 Test the validitiy of the odtest.
 
-```{r}
-Test.Deviance.Overdispersion.Poisson.pscl<-function(Sample.Size,Parameter.Lambda){
-  my.Sample<-rpois(Sample.Size,Parameter.Lambda) # get poisson dist
-  my.Sample <- data.frame(myy=my.Sample)
-  print(my.Sample)
-  Model<-glm.nb(myy~1, data=my.Sample) # fit poisson wth only intercept
-  odtest.sample <- odTest(Model)
-#   return(odtest.sample)
-} 
-
-Test.Deviance.Overdispersion.Poisson.pscl(100, 5)
-
-
-```
 
 Use odTest to test the glm.nb model created by the mass package 
 ```{r}
@@ -171,21 +159,7 @@ GLM.model.nb
 odTest(GLM.model.nb)
 
 ```
-
-
-# fit negative binomials, and test which negative binomial it is likely to be -- if it is general negative binomial, then it is not poisson, but, we may find that it is a poisson that fits the best
-
-# small p value -- reject if it is poisson
-
-Test.Deviance.Overdispersion.NBinom.pscl<-function(Sample.Size,Parameter.prob){
-  my.Sample<-rnbinom(Sample.Size,2,Parameter.prob)
-  Model<-glm.nb(my.Sample~1)
-  
-# this function compares the log likelihoods of a negative binomial model and the poissom model
-  odtest.sample <- odTest(Model)
-  return(odtest.sample)
-} 
-Test.Deviance.Overdispersion.NBinom.pscl(100, .2)
+Again, we see that the p-value is very small -- indicating overdispersion.
 
 
 
@@ -207,18 +181,21 @@ ecdfplot(~ sample1 + sample2, data=Cum.Distr.Functions, auto.key=list(space='rig
 ```{r}
 ks.test(sample1,sample2)
 ```
+P-value is again very small -- this is another indication that we may have overdispersion.
+
 
 Check eqiovalence of empirical distribution of sample1 and theoretical distribution Norm(0,1).
 The null hypothesis is that the distributions are the same.
 ```{r}
 ks.test(sample1,"pnorm",mean=0,sd=1)
 ```
+There is weak evidence that sample 1 is different from a normal distribution with mean 0 and standard deviation 1.
 
 Check equivalence of the empirical distribution of sample2 and theoretical distribution Norm(0,1).
 ```{r}
 ks.test(sample2,"pnorm",mean=0,sd=1)
 ```
-
+It appears that sample2 is significantly different from the normal distribution.
 
 5.2. Check the distribution for the entire period.
 if it is a poisson distribution, then the time intervals between malfunctions should be exponential
@@ -235,16 +212,106 @@ ecdfplot(~ time.differences)
 Use at least 5 different candidates for distribution of Poisson intensity of malfunctions.
 
 Find one-minute intensities.
+```{r}
 
+Event.Intensities <-hist(ceiling(Counting.Process$Time/60), breaks=15000/60)$counts
+Event.Intensities <-  Event.Intensities/60
+```
 ```{r}
 # event intensities are the counts of observations in each 1 minute period
 hist(Event.Intensities)
 ```
 
+1st Distribution:
+Normal
+```{r}
+normal.fitting <- fitdistr(Event.Intensities, "normal")
+print(normal.fitting)
+```
 
-For the gamma distribution find the parameters by the method of moments -- then ks test the gamma with those parameters against the sample
+2nd Distribution 
+Exponential
+```{r}
+exponential.fitting <- fitdistr(Event.Intensities, "exponential")
+print(exponential.fitting)
+```
 
-Gamma distribution will not allow you to reject the hypothesis
+3rd Distribution
+Geometric
+```{r}
+geometric.fitting <- fitdistr(Event.Intensities, "geometric")
+print(geometric.fitting)
+```
 
-find other 2 -- 1 worked well one 
-gamma dist for the intensity means negative binomial for the counts
+4th Distribution
+Beta
+```{r}
+beta.fitting <- fitdistr(Event.Intensities[Event.Intensities>0], "beta", list(shape1=.5, shape2=.5))
+print(beta.fitting)
+```
+
+5th Distribution
+Gamma
+```{r}
+gamma.fitting <- fitdistr(Event.Intensities[Event.Intensities>0], "gamma",list(shape = 1, rate = 0.1), lower = 0.001, upper=.999)
+print(gamma.fitting)
+```
+
+Test the fitted distributions with the Kolmogoraov-Smirnov Test
+Normal:
+```{r}
+KS.Normal <- ks.test(Event.Intensities, "pnorm", mean=normal.fitting$estimate["mean"], sd=normal.fitting$estimate["sd"])
+c(KS.Normal$statistic, P.Value=KS.Normal$p.value)
+```
+
+Exponential:
+```{r}
+KS.exp <- ks.test(Event.Intensities, "pexp", rate=exponential.fitting$estimate["rate"])
+c(KS.exp$statistic, P.Value=KS.exp$p.value)
+```
+
+Geometric:
+```{r}
+KS.geom <- ks.test(Event.Intensities, "pgeom", prob=geometric.fitting$estimate["prob"])
+c(KS.geom$statistic, P.Value=KS.geom$p.value)
+```
+
+Beta:
+```{r}
+KS.beta <- ks.test(Event.Intensities, "pbeta", shape1=beta.fitting$estimate["shape1"],  shape2=beta.fitting$estimate["shape2"])
+c(KS.beta$statistic, P.Value=KS.beta$p.value)
+```
+
+Gamma:
+```{r}
+KS.gamma <- ks.test(Event.Intensities, "pgamma", shape=gamma.fitting$estimate["shape"], rate=gamma.fitting$estimate["rate"])
+c(KS.gamma$statistic, P.Value=KS.gamma$p.value)
+```
+
+
+Fit the gamma distribution directly.
+
+```{r}
+gamma.mom <- function(x) {
+  x.bar <- mean(x)
+  n <- length(x)
+  v <- var(x) * (n-1) / n
+  
+  l.est <- x.bar/v
+  a.est<-(x.bar)^2/v
+  # gamma distribution has mean shape*scale and variance shape*scale**2 + shape**2*scale**2
+  
+  return(list(rate=l.est, shape=a.est))
+  
+}
+print(gamma.mom(Event.Intensities))
+gamma.mom.estimates<- gamma.mom(Event.Intensities)
+```
+
+Ks- Test the method of moments gamma parameters against the known distribution
+```{r}
+KS.gamma.mom <- ks.test(Event.Intensities, "pgamma", shape=gamma.mom.estimates$shape, rate=gamma.mom.estimates$rate)
+c(KS.gamma.mom$statistic, P.Value=KS.gamma$p.value)
+```
+
+This is an extremely low D statistic and p-value -- we can conclude that the intensities follow a gamma distribution. This implies that the counts follow a negative binomial distribution. We will try to estimate that negative binomial distribution in part II
