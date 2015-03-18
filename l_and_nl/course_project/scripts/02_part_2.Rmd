@@ -19,52 +19,100 @@ plot(Part2.Data$Temperatures,Part2.Data$Intensities)
 ```
 
 **Interpret the plot. What type od relationship you observe?**
-I observe a comonotonic relationship -- as temperatures increase, so does the temperature. 
+I observe a comonotonic relationship -- as temperatures increase, so does the temperature. However, the relationship does not look linear. It appears that the slope increases as the temperature rises.
 
 Empirical copula should be normalized-- divide all by n, so all numbersare between 0 and 1.
 ```{r}
 plot(rank(Part2.Data$Temperatures),rank(Part2.Data$Intensities))
 ```
 
-We see comonotonic behavior, and tail dependence -- pinched corners. We should investigate this. 
+We see comonotonic behavior, and tail dependence -- pinched corners. We should investigate this. We are seeing Gumbel's copula (there is upper tail dependence). 
+
+What is the distribution of temperatures?
+```{r}
+hist(Part2.Data$Temperatures)
+```
+The distribution looks fairly normal, however there aren't as many high temperatures as expected. 
+
+We test if it is normal.
+```{r}
+library(MASS)
+ks.test(Part2.Data$Temperatures, "pnorm", mean=mean(Part2.Data$Temperatures), sd=sd(Part2.Data$Temperatures))
+```
+We find little evidence to reject the hypothesis that this data is not a normal distribution.
+
+
+
+
 The copula can show stratified parts of the model. 
 Use clayton because left tail dependence
 gumball is for right tail dependence
 ```{r}
-library(MASS)
+library(copula)
+Copula.Object<-gumbelCopula(param=5,dim=2)
+Copula.Fit<-fitCopula(Copula.Object, 
+                       pobs(Part2.Data[c("Temperatures", "Intensities")],ties.method = "average"),
+                      method="ml",
+                      optim.method="BFGS",
+                      optim.control = list(maxit=1000))
+Copula.Fit
+
+par(mfrow=c(2,2))
+set.seed(8301735)
+Defined.copula<-gumbelCopula(param=summary(Copula.Fit)$coefficients[1,1],dim=2)
+persp(Defined.copula, dCopula, main="pdf",xlab="u", ylab="v", zlab="c(u,v)")
+contour(Defined.copula,dCopula, main="pdf",xlab="u", ylab="v")
+Simulated.Gumbel.Copula<-rCopula(500,Defined.copula)
+plot(Simulated.Gumbel.Copula,main="Simulated Copula",xlab="Variable 1",ylab="Variable 2")
+plot(apply(Simulated.Gumbel.Copula,2,rank)/length(Simulated.Gumbel.Copula[,1]),main="Empirical Copula",xlab="Variable 1",ylab="Variable 2")
+title("Copula.Fit",outer=TRUE,line=-2)
 ```
 
-Look at the histogram
+
 ```{r}
-hist(Part2.Data$Temperatures)
+Gamma.Rate<- 8.132
+Gamma.Shape<-1.656
+Fit.Normal<- c(mean(Part2.Data$Temperatures),sd(Part2.Data$Temperatures))
 ```
-
-Looks normal -- fit dist normal distribution , check kolmogorov - smirnov test -- no reason to reject it is normal  with mean 100.07 and sd 4.812
-
-
 WE now how two distributions -- one is gamma, one is normal ... fit copula and simulate now.
 
-Output of pobs goes in to fit copula function.
+```{r}
+par(mfrow=c(1,1))
+Simulated.Copula <- rCopula(5000, Defined.copula)
+Simulated.Intensities<-qgamma(Simulated.Copula[,1], shape=Gamma.Shape, scale=1/Gamma.Rate)
+Simulated.Temperature<-qnorm(Simulated.Copula[,2],Fit.Normal[1],Fit.Normal[2])
+plot(Simulated.Temperature,Simulated.Intensities)
+```
 
-create new object using same parameters for simulating the model.
-1. create copula
-2. run fit copula -- this estimates the parameters
-3. plot the fit copula result
+```{r}
+plot(rank(Simulated.Intensities),rank(Simulated.Temperature))
+```
 
-Check out lecture 3. Invert the marginal distributions. 
+Select simulated pairs with intensity greater than 0.5 and temperature greater than 110.
+We then fit a model to just the tail events.
+```{r}
+pairs<-data.frame(intensity=Simulated.Intensities, temp=Simulated.Temperature)
+tail.events<- pairs[Simulated.Intensities>0.5 & Simulated.Temperature > 110,]
+```
 
 
-concentrate on cloud in upper right -- fit differnt model to tail events --see how different they will be
-WE first need to separate thet ail from the main sample. Not a lot of obs here, so didn't bother. Probably wont pollute the main sample. 
+I first use the initial sample of intensities and temperatures to fit the negative binomial regression for more regular ranges of intensity and temperature.
+```{r}
+summary(main.model <- glm.nb(Counts~Temperatures, data=Part2.Data, init.theta=4.202611755, link=log))
 
-We separate tail events, plot them, and fit a model to just the tail events.
+```
 
-first part is negative binomial model -- we found earlier that intensity has gamma distribution , so a count has a negative binomial model to original sample.
+Then I create a simulated sample for tail events and fit another model to the tail events sample.
 
-We tried negative binomial model to tail events, but we wil see what happened. Tail events may come much closer to poisson -- pretty common in practice.  This is because they are significantly rare, and rare events follow a poisson more often. 
+```{r}
+Simulated.Tails<-as.data.frame(
+  cbind(round(Simulated.Intensities[(Simulated.Temperature>110)&(Simulated.Intensities>.5)]*60),
+        Simulated.Temperature[(Simulated.Temperature>110)&(Simulated.Intensities>.5)]))
+colnames(Simulated.Tails)<-c("Counts","Temperatures")
+plot(Simulated.Tails$Temperatures,Simulated.Tails$Counts)
+summary(tail.model<-glm.nb(Counts~Temperatures, data=Simulated.Tails, init.theta = 86.27217344, link=log))
+```
 
-Theta comes out of the model -- it is estimated from the long sample 86.3. The regular sample was 4. Significant difference between the two thetas.
+In the tail model, the theta parameter is much higher than for the main model, indicating that this data follows a poisson distirubtion closer than the normal model with the bulk fo the data. Additional evidence that poisson model might be suffient is that we have a residual deviance of 67 compared to 65 degress of freedom. This tells me that the tail events look closer to poisson than the regular events. This is common in practice according to the in-class discussions. I could try to use a poisson model to model the tail data, instead of a negative binomial model. 
 
-What is theta? this is  glm.nb defines the variance of the model as μ+μ2/θ. Theta tells us about overdispersion. Overdispersion is lower when theta is larger. 
-
-Recommended to go and try to fit poisson. 82 deviance vs 83 deg of freedom tells us it is close to poisson.
+Both models tell me that the relationship between the temperature and the counts is a positive one. I know this because the estimate for both models on temperatures is significant and positive. Both estimates are a little less than .1, so we can say that on average an increase in the temperature by one degree leads to a change in the logs of the counts of .1.
