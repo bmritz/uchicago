@@ -43,7 +43,7 @@ AIC(lm.CODON_2.VL)
 anova(lm.CODON_2.VL)
 ```
 
-From the anova results we can see that the means do not appear different. This is because the p-value on the CODON_2 response is greater than our threshhold of .05.
+From the anova results we can see that the means do not appear different. This is because the p-value on the CODON\_2 response is greater than our threshhold of .05. This is an indicator that perhaps CODON\_2 does not make a difference in the viral load.
 
 
 Now we will fit the model with a random effect.
@@ -60,7 +60,7 @@ The AIC for the random effect is greater than for the fixed effects model. This 
 Now we will fit a logistic regression:
 
 ```{r}
-glm.CODON_2.VL <- glm(Resp~VL, family=binomial, data=HIV.Protease.Data)
+glm.CODON_2.VL <- glm(Resp~VL, family="binomial", data=HIV.Protease.Data)
 print(AIC(glm.CODON_2.VL))
 matplot(1:length(HIV.Protease.Data$Resp),cbind(HIV.Protease.Data$Resp,glm.CODON_2.VL$fitted.values),pch=16)
 ```
@@ -74,15 +74,25 @@ We will fit a model with CODON_2 as a predictor:
 
 ```{r}
 library(MASS)
-glm.CODON_2.LV <- glm(Resp~VL+CODON_2, family = binomial, data=HIV.Protease.Data)
+
+# glm.CODON_2.LV <- nlme(Resp~VL+CODON_2, data=HIV.Protease.Data)
+glm.CODON_2.LV2 <- glmmPQL(Resp~VL, random=~1|CODON_2, family=binomial, data=HIV.Protease.Data)
+# glm.CODON_2.LV <- glm(Resp~VL+CODON_2, family = binomial, data=HIV.Protease.Data)
 ```
 
 Compare the results to other models:
 ```{r}
-AIC(glm.CODON_2.LV)
-plot(predict(glm.CODON_2.LV,type="response"))
-head(cbind(HIV.Protease.Data$Resp,predict(glm.CODON_2.LV,type="response")))
+AIC(glm.CODON_2.LV2)
+plot(predict(glm.CODON_2.LV2,type="response"))
+head(cbind(HIV.Protease.Data$Resp,predict(glm.CODON_2.LV2,type="response")))
 ```
 
+Compare the predictions:
 
+```{r}
+par(mfrow=c(1,1))
+plot(predict(glm.CODON_2.VL, type="response"))
+plot(predict(glm.CODON_2.LV2, type="response"))
+```
 
+The plots of the predictions do look different. The model with the random effect of the CODON_2 variable has a concentration of predicitons near zero, which the regular logistic regression does not have. 
