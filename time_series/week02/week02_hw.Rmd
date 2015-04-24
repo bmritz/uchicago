@@ -1,0 +1,101 @@
+---
+title: "Assignment2 -- Regression"
+author: "Brian Ritz"
+date: "Friday, April 24, 2015"
+output: html_document
+---
+
+Dataset: Hollywood Movies
+
+Objective:
+
+1 Plot the independent variables X2, X3 X4 together in a single plot - what do you conclude in terms of relationship between them?
+2 Scatter plot among the variables
+3 ADF of the independent variables
+4 Regression output - R2 and any other metric you want to mention
+5 Regression coefficients
+6 p-value of the coefficients
+7 What can you comment about multicollinearity?
+8 plot the ACF of the residuals
+
+
+
+__1 Plot the independent variables X2, X3, and X4 together in a single plot - what do you conclude in terms of relationship between them?__
+
+```{r}
+library(tidyr) #data munging
+library(dplyr) #data munging
+library(ggplot2) #plotting
+library(tseries) #adf.test
+library(usdm) # vif
+```
+
+```{r}
+movie.dataset <- read.csv("mlr04.csv", header=T)
+gather(movie.dataset, "variable","value", 2:4) %>%
+  ggplot(aes(x=X1, y=value, col=variable)) + geom_point(size=5)
+```
+
+WHAT DO I SEE?
+All variables have a positive relation ship with X1. X4 has the most variance, while X2 and X3 have less variance but similar variance. X2 and X3 are more highly correlated with eachother than X4. All variables show a positive relationship to X1. 
+
+
+__2 Scatter plot among the variables__
+```{r}
+plot(movie.dataset)
+```
+
+WHAT DO I SEE?
+X1, X2, and X3 all have positive relationships with each other. But X4 does not have as apparent positive relationship with either X1, X2, or X3.
+
+
+__3 ADF of the independent variables__
+```{r}
+# X2 
+adf.test(movie.dataset$X2)
+
+#X3
+adf.test(movie.dataset$X3)
+
+#X4
+adf.test(movie.dataset$X4)
+```
+
+WHAT DO I SEE?
+The null hypothesis for the Augmented Dickey Fuller test is that the series is not stationary (that there is a unit root of the time series). We reject the null hypothesis for X2 and X3, but fail to reject it at X4. This means that we have reason to believe X4 is stationary, while X2 and X3 are not stationary.
+
+
+__4 Regression output - R2 and any other metric you want to mention__
+```{r}
+summary(model <- lm(X1~X2+X3+X4, data=movie.dataset, y=T, x=T))
+```
+The R-squared is .96, which is relatively high. You can interpret this as the model explains 96% of the variation in X1 through variation in the independent variables. The F-statistic has a small p-value, indicating that the model fits the data well.
+
+__5 Regression coefficients__
+```{r}
+model$coefficients
+```
+The coefficients can be interpreted in the following way: for a one unit increase in the independent variable, the dependent variable will change by the coefficient on the independent variable. For example, for a one unit increase in X2, X1 will increase by 3.66; for a one unit increase in X3, X1 will increase 7.62; and for a one unit increase in X4, X1 will increase by .82. 
+
+__6 p-value of the coefficients__
+```{r}
+a<-summary(model)
+a$coefficients
+```
+
+The coefficients fro X2 and X3 are significant at alpha=.05, wile X4 is only significant at alpha=.2. The coefficient for the intercept has a p-value of .29. You can interpret these p-values as the probability that a process with actual mean coefficient = 0 would produce these data.
+
+__7 What can you comment about multicollinearity?__
+```{r}
+cor(movie.dataset[2:4])
+vif(movie.dataset[2:4])
+```
+
+Multi-collinearity is present because X2 and X3 are highly correlated with eachother. The vif test indicates that there is a lot of inflation in variance of the X2 and X3 variables due to multi-collinearity. 
+
+__8 plot the ACF of the residuals__
+```{r}
+acf(model$residuals)
+```
+
+Testing the auto-correlation of residuals. There are no lags that are outside the confidence band for acf=0, so we can conclude that auto-correlation is not present. 
