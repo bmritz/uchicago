@@ -1,0 +1,46 @@
+---
+title: "Week 03 Homework"
+author: "Brian Ritz"
+date: "Monday, May 04, 2015"
+output: html_document
+---
+
+
+The Excel data file is attached.
+
+Use datasets from 1955 to 1968 to build an ARMA or ARIMA models for UN and GDP.
+Justify why you chose (ARMA or ARIMA) one over the other.  Note there will be 2 models, one for UN and another for GDP.
+Use the chosen UN and GDP models to forecast the UN and the GDP for 1969.
+Compare your forecasts with the actual values using error = actual - estimate and plot the errors.
+Calculate the Sum of squared(error) for each UN and GDP models.
+Regression - build regression models that use:
+
+UN as the independent variable and GDP as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
+GDP as the independent variable and UN as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
+Compare the 2 models - any reason to believe which should be the independent and the dependent variables.
+
+```{r}
+library(tseries)
+```
+
+
+Import the data first
+```{r}
+# import the data
+
+raw.data <- read.csv("Unemployment_GDP_UK.csv", header=T)
+unemployment <- ts(data=raw.data$UN, frequency=4, start=c(1955, 2))
+gdp <- ts(data=raw.data$GDP, frequency=4, start=c(1955, 2))
+
+```
+
+Use datasets from 1955 to 1968 to build an ARMA or ARIMA models for UN and GDP.
+
+UN Model
+
+Test for stationarity -- Augmented Dickey Fuller Test
+```{r}
+adf.test(unemployment)
+adf.test(gdp)
+```
+
