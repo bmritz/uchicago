@@ -8,19 +8,23 @@ output: html_document
 
 The Excel data file is attached.
 
-Use datasets from 1955 to 1968 to build an ARMA or ARIMA models for UN and GDP.
-Justify why you chose (ARMA or ARIMA) one over the other.  Note there will be 2 models, one for UN and another for GDP.
-Use the chosen UN and GDP models to forecast the UN and the GDP for 1969.
-Compare your forecasts with the actual values using error = actual - estimate and plot the errors.
-Calculate the Sum of squared(error) for each UN and GDP models.
-Regression - build regression models that use:
+1. Use datasets from 1955 to 1968 to build an ARMA or ARIMA models for UN and GDP.
+2. Justify why you chose (ARMA or ARIMA) one over the other.  Note there will be 2 models, one for UN and another for GDP.
+3. Use the chosen UN and GDP models to forecast the UN and the GDP for 1969.
+4. Compare your forecasts with the actual values using error = actual - estimate and plot the errors.
+5. Calculate the Sum of squared(error) for each UN and GDP models.
+6. Regression - build regression models that use:
 
-UN as the independent variable and GDP as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
-GDP as the independent variable and UN as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
-Compare the 2 models - any reason to believe which should be the independent and the dependent variables.
+7. UN as the independent variable and GDP as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
+8. GDP as the independent variable and UN as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
+9. Compare the 2 models - any reason to believe which should be the independent and the dependent variables.
 
 ```{r}
 library(tseries)
+library(forecast)
+library(ggplot2)
+library(zoo)
+library(xts)
 ```
 
 
@@ -29,18 +33,72 @@ Import the data first
 # import the data
 
 raw.data <- read.csv("Unemployment_GDP_UK.csv", header=T)
+
 unemployment <- ts(data=raw.data$UN, frequency=4, start=c(1955, 2))
 gdp <- ts(data=raw.data$GDP, frequency=4, start=c(1955, 2))
 
+training.gdp <- window(gdp, end=c(1968, 4))
+training.unemployment <- window(unemployment, end=c(1968, 4))
+
 ```
 
-Use datasets from 1955 to 1968 to build an ARMA or ARIMA models for UN and GDP.
+**1. Use datasets from 1955 to 1968 to build an ARMA or ARIMA models for UN and GDP.**
 
 UN Model
 
 Test for stationarity -- Augmented Dickey Fuller Test
 ```{r}
-adf.test(unemployment)
-adf.test(gdp)
+adf.test(training.unemployment)
+adf.test(training.gdp)
+
+```
+
+We see from the Augmented Dickey Fuller Test that we can reject the null hypothesis that the process is not stationary for the unemployment, but we cannot reject the null hypothesis for the gdp. So, we cannot assume that gdp is stationary, so we will take the difference of the gdp and use that in our analysis. This is why we choose an arima model for GDP. 
+
+
+What order should the difference parameter for the arima be?
+```{r}
+# we will difference it until we can reject the null hypothesis that it is not stationary
+adf.test(diff(training.gdp))
+adf.test(diff(diff(training.gdp)))
+```
+
+A difference of order two rejects the hypothesis that the process is not stationary with a p-value of < .01. So, we will use the second order differencing when creating the arima model.
+
+We now build the ARMA and ARIMA models:
+```{r}
+unemployment.model <- arima(training.unemployment, order=c(4,0,1))
+gdp.model <- arima(training.gdp, order=c(4,2,1))
+```
+
+**2. Justify why you chose (ARMA or ARIMA) one over the other.  Note there will be 2 models, one for UN and another for GDP.**
+I chose the ARMA model for the Unemployment data because we had indications that it was stationary with a p-value of 0.09 on the Augmented Dickey-Fuller test. The ARIMA model was chosen for the GDP model becuase we could not rule out that it was not stationary with a 10% confidence level. When I took the second order difference, we could rule out that it was stationary.
+
+
+**3. Use the chosen UN and GDP models to forecast the UN and the GDP for 1969.**
+
+```{r}
+# forecast for GDP
+gdp.preds.1969 <- predict(gdp.model, n.ahead = 4)
+
+# forecast for Unemployment
+unemployment.preds.1969 <- predict(gdp.model, n.ahead=4)
+```
+
+**4. Compare your forecasts with the actual values using error = actual - estimate and plot the errors.**
+
+```{r}
+# comparison of actuals
+
+gdp.errors <- window(gdp, start=c(1969,1), end=c(1969,4)) - gdp.preds.1969$pred
+unemployment.errors <- window(unemployment, start=c(1969,1), end=c(1969,4)) - unemployment.preds.1969$pred
+```
+
+```{r}
+# plot the errors
+data.for.plot <- data.frame(ts=c(rep("GDP", times=4), rep("UNEMPLOYMENT", times=4)), time=rep(c("1969 Qtr 1", "1969 Qtr 2", "1969 Qtr 3", "1969 Qtr 4"), times=2), error = c(gdp.errors, unemployment.errors))
+
+ggplot(data=data.for.plot, aes(x=time, y=error, fill=ts) ) + geom_bar(stat="identity", position="dodge")
+plot(gdp.errors)
 ```
 
