@@ -15,9 +15,9 @@ The Excel data file is attached.
 5. Calculate the Sum of squared(error) for each UN and GDP models.
 6. Regression - build regression models that use:
 
-7. UN as the independent variable and GDP as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
-8. GDP as the independent variable and UN as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
-9. Compare the 2 models - any reason to believe which should be the independent and the dependent variables.
+6a. UN as the independent variable and GDP as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
+6b. GDP as the independent variable and UN as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.
+6c. Compare the 2 models - any reason to believe which should be the independent and the dependent variables.
 
 ```{r}
 library(tseries)
@@ -34,8 +34,8 @@ Import the data first
 
 raw.data <- read.csv("Unemployment_GDP_UK.csv", header=T)
 
-unemployment <- ts(data=raw.data$UN, frequency=4, start=c(1955, 2))
-gdp <- ts(data=raw.data$GDP, frequency=4, start=c(1955, 2))
+unemployment <- ts(data=raw.data$UN, frequency=4, start=c(1955, 1))
+gdp <- ts(data=raw.data$GDP, frequency=4, start=c(1955, 1))
 
 training.gdp <- window(gdp, end=c(1968, 4))
 training.unemployment <- window(unemployment, end=c(1968, 4))
@@ -50,29 +50,43 @@ Test for stationarity -- Augmented Dickey Fuller Test
 ```{r}
 adf.test(training.unemployment)
 adf.test(training.gdp)
-
 ```
 
-We see from the Augmented Dickey Fuller Test that we can reject the null hypothesis that the process is not stationary for the unemployment, but we cannot reject the null hypothesis for the gdp. So, we cannot assume that gdp is stationary, so we will take the difference of the gdp and use that in our analysis. This is why we choose an arima model for GDP. 
+We see from the Augmented Dickey Fuller Test that we can reject the null hypothesis that the process is not stationary for the unemployment at a 10% confidence level, but we cannot reject the null hypothesis for the gdp. So, we cannot assume that gdp is stationary, so we will take the difference of the gdp and use that in our analysis. This is why we choose an arima model for GDP. 
 
 
-What order should the difference parameter for the arima be?
+What order should the difference parameter for the unemployemnt arima be?
+```{r}
+# partial acf is for the ar parameter
+# acf is for the moving average parameter
+pacf(training.unemployment)
+acf(training.unemployment)
+```
+The q parameter for the arma model for unemployment will be 4 and the p parameter will be 2.
+
+Find parameters for the GDP model:
 ```{r}
 # we will difference it until we can reject the null hypothesis that it is not stationary
 adf.test(diff(training.gdp))
-adf.test(diff(diff(training.gdp)))
+adf.test(diff(training.gdp, differences=2))
+
+# what is the order of the p parameter for gdp
+training.gdp.diff <- diff(training.gdp, differences=2)
+acf(training.gdp.diff)
+pacf(training.gdp.diff)
 ```
 
 A difference of order two rejects the hypothesis that the process is not stationary with a p-value of < .01. So, we will use the second order differencing when creating the arima model.
+Given the plots, the p(AR) parameter will be 1, and the q(MA) parameter will be 1.
 
 We now build the ARMA and ARIMA models:
 ```{r}
-unemployment.model <- arima(training.unemployment, order=c(4,0,1))
-gdp.model <- arima(training.gdp, order=c(4,2,1))
+unemployment.model <- arima(training.unemployment, order=c(1,0,4))
+gdp.model <- arima(training.gdp, order=c(1,2,1))
 ```
 
 **2. Justify why you chose (ARMA or ARIMA) one over the other.  Note there will be 2 models, one for UN and another for GDP.**
-I chose the ARMA model for the Unemployment data because we had indications that it was stationary with a p-value of 0.09 on the Augmented Dickey-Fuller test. The ARIMA model was chosen for the GDP model becuase we could not rule out that it was not stationary with a 10% confidence level. When I took the second order difference, we could rule out that it was stationary.
+I chose the ARMA model for the Unemployment data because we had indications that it was stationary with a p-value of 0.07 on the Augmented Dickey-Fuller test. The ARIMA model was chosen for the GDP model becuase we could not rule out that it was not stationary with a 10% confidence level. When I took the second order difference, we could rule out that it was stationary and therefore I conclude that an arima model with 2nd order difference term is appropriate.
 
 
 **3. Use the chosen UN and GDP models to forecast the UN and the GDP for 1969.**
@@ -82,7 +96,9 @@ I chose the ARMA model for the Unemployment data because we had indications that
 gdp.preds.1969 <- predict(gdp.model, n.ahead = 4)
 
 # forecast for Unemployment
-unemployment.preds.1969 <- predict(gdp.model, n.ahead=4)
+unemployment.preds.1969 <- predict(unemployment.model, n.ahead=4)
+print(gdp.preds.1969$pred)
+print(unemployment.preds.1969$pred)
 ```
 
 **4. Compare your forecasts with the actual values using error = actual - estimate and plot the errors.**
@@ -90,15 +106,85 @@ unemployment.preds.1969 <- predict(gdp.model, n.ahead=4)
 ```{r}
 # comparison of actuals
 
-gdp.errors <- window(gdp, start=c(1969,1), end=c(1969,4)) - gdp.preds.1969$pred
-unemployment.errors <- window(unemployment, start=c(1969,1), end=c(1969,4)) - unemployment.preds.1969$pred
+(gdp.errors <- window(gdp, start=c(1969,1), end=c(1969,4)) - gdp.preds.1969$pred)
+(unemployment.errors <- window(unemployment, start=c(1969,1), end=c(1969,4)) - unemployment.preds.1969$pred)
 ```
 
 ```{r}
 # plot the errors
+par(mfrow=c(1,1))
+plot(gdp.errors, xlim=c(1969, 1970))
+plot(unemployment.errors)
+
 data.for.plot <- data.frame(ts=c(rep("GDP", times=4), rep("UNEMPLOYMENT", times=4)), time=rep(c("1969 Qtr 1", "1969 Qtr 2", "1969 Qtr 3", "1969 Qtr 4"), times=2), error = c(gdp.errors, unemployment.errors))
 
 ggplot(data=data.for.plot, aes(x=time, y=error, fill=ts) ) + geom_bar(stat="identity", position="dodge")
-plot(gdp.errors)
+
 ```
 
+**5. Calculate the Sum of squared(error) for each UN and GDP models.**
+```{r}
+(sse.unemployment<- sum(sapply(unemployment.errors, function(x) x**2)))
+(sse.gdp <- sum(sapply(gdp.errors, function(x) x**2)))
+```
+
+**6. Regression - build regression models that use:**
+
+**6a. UN as the independent variable and GDP as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.**
+
+```{r}
+
+gdp.on.unemployment.fit <- lm(data = raw.data[raw.data$Year != 1969,], GDP ~ UN )
+gdp.validation <-raw.data[raw.data$Year == 1969,]
+lm.gdp.predictions <- predict(gdp.on.unemployment.fit, newdata=gdp.validation, type = "response")
+
+```
+
+Error Plot:
+```{r}
+(gdp.fit.errors <- gdp.validation[, "GDP"] - lm.gdp.predictions)
+plot(gdp.fit.errors)
+```
+
+SSE:
+```{r}
+(gdp.fit.sse <- sum(sapply(gdp.fit.errors, function(x) x**2)))
+```
+
+
+**6b. GDP as the independent variable and UN as the dependent variable - use data from 1955 to 1968 to build the model. Forecast for 1969 and plot the errors and calculate the sum of squared(error) as previously.**
+
+```{r}
+
+unemployment.on.gdp.fit <- lm(data = raw.data[raw.data$Year != 1969,], UN ~ GDP )
+unemployment.validation <- raw.data[raw.data$Year == 1969,]
+lm.unemployment.predictions <- predict(unemployment.on.gdp.fit, newdata=unemployment.validation, type = "response")
+
+```
+
+Error Plot:
+```{r}
+(unemployment.fit.errors <- unemployment.validation[, "UN"] - lm.unemployment.predictions)
+plot(unemployment.fit.errors)
+```
+
+SSE:
+```{r}
+(unemployment.fit.sse <- sum(sapply(unemployment.fit.errors, function(x) x**2)))
+```
+
+**6c. Compare the 2 models - any reason to believe which should be the independent and the dependent variables.**
+ To compare the two models, we will calculate the out-of-sample MAPE and the out-of-sample R-squared for both models.
+ 
+ 
+```{r}
+(mape.gdp <- mean(abs(gdp.fit.errors / gdp.validation$GDP)))
+sst.gdp <- sum(sapply(gdp.validation$GDP - mean(gdp.validation$GDP), function(x) x**2))
+(r.squared.gdp.on.unemployment <- 1 - (gdp.fit.sse / sst.gdp))
+
+(mape.unemployment <- mean(abs(unemployment.fit.errors / unemployment.validation$UN)))
+sst.unemployment <- sum(sapply(unemployment.validation$UN - mean(unemployment.validation$UN), function(x) x**2))
+(r.squared.unemployment.on.gdp <- 1 - (unemployment.fit.sse / sst.unemployment))
+```
+
+Because the GDP on unemployment linear model has a slightly better fit out of sample (as shown by the mape), I conclude that GDP is a function of of unemployment.
