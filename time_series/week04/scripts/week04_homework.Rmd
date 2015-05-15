@@ -1,0 +1,130 @@
+---
+title: "week04_homework"
+author: "Brian Ritz"
+date: "May 12, 2015"
+output: html_document
+---
+
+```{r}
+require(gdata)
+library(lubridate)
+library(forecast)
+library(dplyr)
+# import all the data
+
+date.char <- "July-1"
+
+
+
+import.day.data <- function(date.char){
+    
+  a <- read.xls(paste0("../input/I-57-2013-", date.char, ".xls"), header=T, skip=1, stringsAsFactors=F)
+  
+  #cnames<-names(a)
+  #first.row <- as.character(as.vector(a[1,]))
+  
+  actual.data <- a[3:26,c(3,5)]
+  date.vector <- rep(date.char, nrow(actual.data))
+  actual.data$date <- date.vector
+  return (actual.data)
+}
+
+all.dates<- c("June-16", "June-17", "June-18", "June-19", "June-20", "June-21", "June-22", "June-23", "June-24", "June-25", "June-26", "June-27", "June-28", "June-29", "June-30", "July-1")
+
+all.data<-sapply(all.dates, FUN=import.day.data, simplify=F)
+
+all.data<-do.call(rbind, all.data)
+
+all.data$date <- sapply(all.data$date, FUN=function(x) paste0(x, "-2013"))
+all.data$Time <- sapply(all.data$Time, FUN=function(x) paste0(x, ":00"))
+all.data$DateTime <- mdy_hms(mapply(FUN=function(x, y) (paste(x, y, sep=" ")), all.data$date, all.data$Time, USE.NAMES=F), tz="America/Chicago")
+all.data$I80E <- as.numeric(all.data$I80E)
+saveRDS(all.data, file="I80_traffic.Rds")
+
+```
+
+```{r}
+# make the time series and fit using auto-arima
+
+I80.traffic<-ts(as.numeric(all.data$I80E), frequency = 24)
+
+june.traffic <- window(I80.traffic, start=c(1,1), end=c(15, 24))
+july.traffic <- window(I80.traffic, start=c(16,1), end=c(16, 24))
+
+fit <- auto.arima(june.traffic)
+
+
+```
+
+DO AICc and BIC select the same model as the best model?
+
+```{r}
+
+summary(fit <- auto.arima(june.traffic, ic="aicc", seasonal = F))
+summary(fit <- auto.arima(june.traffic, ic="bic", seasonal=F))
+
+
+
+```
+Evaluating using AICc or BIC does make a difference. Using AICc, auto.arima produced an arima of (2,0,3), while BIC produced a model of order (2,0,2). 
+
+Instead of changing p and q manually and checking the AICc and BIC of the resulting fit, I used auto.arima to iterate through many p and q parameters and pick the best one based on AICc (in the first case) and BIC (in the second case). 
+
+**PART 2**
+Use the day of week seasonal ARIMA(p,d,q)x(P,D,Q)s to forecast July 1, which is Monday.
+
+```{r}
+
+# make a weekly time series
+weekly.time.series <- ts(june.traffic, frequency=24*7)
+
+# fit the time series, the seasonality component defaults to the frequency of the time series
+summary(weekly.fit<- auto.arima(weekly.time.series, seasonal=T))
+
+```
+
+Now forecast for July 1:
+```{r}
+plot(july.1.forecast <- forecast(weekly.time.series, h = 24))
+summary(july.1.forecast)
+```
+
+
+** PART 3 **
+Hour of the day seasonality included:
+```{r}
+summary(day.seasonality.fit <- auto.arima(june.traffic), seasonal=T)
+```
+The ARIMA(2,0,1)(2,0,0)[24] tells us that the frequency of the seasonality is 24 hours, or a day. This is daily seasonality. 
+
+July Forecast for the daily seasonality:
+```{r}
+july.1.forecast.daily <- forecast(day.seasonality.fit, h=24)
+
+(july.1.forecast.daily.means <- july.1.forecast.daily$mean)
+
+```
+
+The forecast for July 1 at 8:00 is `july.1.forecast.daily.means[8]`, the forecast for 9:00 is `july.1.forecast.daily.means[9]`, the forecast for 17:00 is `july.1.forecast.daily.means[17]`, the forecast for 18:00 is `july.1.forecast.daily.means[18]`.
+
+
+** PART 4 **
+For the July 1 8:00, 9:00, 17:00 and 18:00 forecasts, which model is better (part 2 or part 3) ?
+
+```{r}
+actuals <- july.traffic
+weekly.forecast <- july.1.forecast$mean
+daily.forecast <- july.1.forecast.daily.means
+
+weekly.error <- (as.vector(weekly.forecast) - as.vector(actuals))
+daily.error <-  (as.vector(daily.forecast) - as.vector(actuals)) 
+error.comparison <- weekly.error / daily.error
+
+(error.comparison[8])
+(error.comparison[9])
+(error.comparison[17])
+(error.comparison[18])
+```
+
+For all of 8:00, 9:00, 17:00, and 18:00, the weekly forecast performed better than the daily forecast by a wide margin--mostly greater than 10 to 1. 
+
