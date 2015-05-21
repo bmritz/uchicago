@@ -1,0 +1,139 @@
+---
+title: "Week 05 Homework"
+author: "Brian Ritz"
+date: "Monday, May 18, 2015"
+output: html_document
+---
+
+
+Load data from TSA package (the package is written by textbook authors Jonathan Cryer and Kung-Sik Chan).
+
+>library("TSA")
+
+>data(beersales)
+
+The data is the monthly beer sales in millions of barrels, 01/1975 - 12/1990.
+
+Part 1 - use ARIMA(p,d,q) model to forecast beer sales for all months of 1990.
+
+1A - Use the h-period in forecast() to forecast each month of 1990.
+
+1B - Use the monthly data as a continuous time series. Forecast for 1990 Jan, Plug forecast into the time series to forecast for 1990 Feb. And so on and so forth.
+
+1C - which of the two above approaches yield the better results in terms of Mean Squared Error 1990?
+
+Part 2 - use month of the year seasonal ARIMA(p,d,q)(P,Q,D)s model to forecast beer sales for all the months of 1990.
+
+Part 3 - Which model (Part 1 or Part 2) is better to forecast beer sales for each month of 1990 (Jan, Feb, ..., Dec) ? 
+
+Due date: 2015 Feb 19th 11:59pm
+
+```{r}
+# load the dataset
+library(forecast, quietly=T)
+library("TSA", quietly=T)
+data(beersales)
+```
+
+Create an ARIMA Model
+
+```{r}
+train <- window(beersales, start=c(1975,1), end=c(1989,12))
+beersales.1990 <- window(beersales, start=c(1990, 1), end=c(1990, 12))
+```
+
+adf test checks for stationarity
+
+```{r}
+print(adf.test(train))
+```
+
+We see that it is stationary because the p-value on the adf test is 0.01. Therefore, we can restrict our model to a stationary model.
+```{r}
+# we have approximation = F to get rid of warnings that the algorithm could not fit a max likelihood model
+fit <- auto.arima(train, max.P=0, max.D=0, max.Q=0, stationary = T, seasonal = F, approximation = F)
+```
+
+
+**1A - Use the h-period in forecast() to forecast each month of 1990.**
+
+```{r}
+# the h parameter gives the number of periods forward to forecast
+(forecast.1990.arima <- forecast(fit, h = 12))
+```
+
+**1B - Use the monthly data as a continuous time series. Forecast for 1990 Jan, Plug forecast into the time series to forecast for 1990 Feb. And so on and so forth.**
+
+```{r}
+train.loop <- train
+forecasts.loop <- c()
+h<-0
+while(h < 12){
+  fit.loop <- auto.arima(train.loop, max.P=0, max.D=0, max.Q=0, stationary = T, seasonal = F, approximation=F)
+  one.mo.forecast <- forecast(fit.loop, h = 1)
+  
+  # log the forecast we just made
+  forecasts.loop <- c(forecasts.loop, one.mo.forecast$mean)
+  
+  # add the forecast to the training dataset
+  train.loop <- ts(c(train.loop, one.mo.forecast$mean), start=start(train.loop), frequency=frequency(train.loop))
+  
+  # use the length of the forecasts to exit the loop if its time
+  h = length(forecasts.loop)
+}
+
+(forecasts.loop <- ts(forecasts.loop, start=c(1990, 1), frequency=12))
+
+```
+
+**1C - which of the two above approaches yield the better results in terms of Mean Squared Error 1990?**
+
+```{r}
+mse <- function(actual, forecast){
+  errors <- as.vector(actual) - as.vector(forecast)
+  return (sum(errors**2)/length(errors))
+}
+
+forecast.error.yearly <- mse(beersales.1990, forecast.1990.arima$mean)
+forecast.error.monthly <- mse(beersales.1990, forecasts.loop)
+
+print(forecast.error.yearly)
+print(forecast.error.monthly)
+```
+
+The monthly continuous estimation gave a lower mean squared error. 
+
+**Part 2 - use month of the year seasonal ARIMA(p,d,q)(P,Q,D)s model to forecast beer sales for all the months of 1990.**
+
+```{r}
+summary(seasonality.fit <- auto.arima(train, seasonal = T, stationary = T, approximation=F))
+(seasonality.forecast <- forecast(seasonality.fit, h=12))
+```
+
+
+**Part 3 - Which model (Part 1 or Part 2) is better to forecast beer sales for each month of 1990 (Jan, Feb, ..., Dec) ? **
+
+We will check the mse of part 2, and compare it to part 1:
+```{r}
+forecast.error.seasonality <- mse(beersales.1990, seasonality.forecast$mean)
+
+
+print(forecast.error.yearly)
+print(forecast.error.monthly)
+print(forecast.error.seasonality)
+
+```
+
+Using the seasonality decrease the mean squared error by half! The seasonality model is much better for forecasting beer sales for 1990.
+
+
+Break it down by forecasts for each month:
+
+```{r}
+forecasts.and.actuals <- ts(data.frame(actual = beersales.1990, yearly=forecast.1990.arima$mean, monthly=forecasts.loop, seasonal=seasonality.forecast$mean), start=c(1990, 1), frequency=12)
+
+(all.errors <- apply(forecasts.and.actuals, FUN=function(x) x-forecasts.and.actuals[,"actual"], MARGIN=2))
+```
+
+The seasonal forecasts are usually always better than the non-seasonal forecasts, with the exception of May, July, and December.
+
