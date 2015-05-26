@@ -1,0 +1,110 @@
+---
+title: "Week 06 Homework"
+author: "Brian Ritz"
+date: "May 25, 2015"
+output: html_document
+---
+
+Attached gas furnace dataset has the following:
+
+Input gas rate - this is the independent variable
+
+Output gas CO2 % - this is the dependent variable that needs to be forecast
+
+Tasks:
+
+Use linear regression model - plot the ACF - what can you conclude ?
+Use ARIMA (0,0,1) model for the residuals. Adjust the Input gas rate and Output CO2 % with the MA coefficient. Combine with the linear regression model. Plot the residuals.
+Use ARIMA (1,0,0) model for the residuals. Adjust the Input gas rate and Output CO2 % with the AR coefficient. Combine with the linear regression model. Plot the residuals.
+Use ARIMA (0,0,2) model for the residuals. Adjust the Input gas rate and Output CO2 % with the MA coefficient. Combine with the linear regression model. Plot the residuals.
+Use ARIMA (2,0,0) model for the residuals. Adjust the Input gas rate and Output CO2 % with the AR coefficient. Combine with the linear regression model. Plot the residuals.
+Use ARIMA (2,0,2) model for the residuals. Adjust the Input gas rate and Output CO2 % with the AR and MA coefficients. Combine with the linear regression model. Plot the residuals.
+Use fractional ARIMA model (aka ARFIMA) for the output gas CO2% - plot the residuals, acf and pacf plots of the model. You can use an R package like fracdiff
+Which ARIMA model gives the best result in terms of residuals being close to white noise ?
+The file arma_innovation.R contains an R function arma.innovation () that might be useful for adjusting the gas rate and CO2% given an ARMA model.  You should study the code and the example in the file to try to understand what the function does and how it might help you.
+
+```{r}
+library(fracdiff)
+library(forecast)
+gas_dataset <- read.csv("Dataset.csv")
+```
+
+***Use the linear regression model, plot the acf, what can you conclude?***
+
+```{r}
+fit.lm <- lm(gas_dataset$Outlet.gas.CO2.percentage~gas_dataset$Input.gas.rate)
+acf(ts(fit.lm$residuals))
+```
+
+The autocorrelation function plot shows a pattern like a roller-coaster, with peaks at 12 and potentially 25. This particular pattern suggests there is autocorrelation in the errors.
+
+***Use ARIMA (0,0,1) model for the residuals. Adjust the Input gas rate and Output CO2 % with the MA coefficient. Combine with the linear regression model. Plot the residuals.***
+
+```{r}
+resids<-ts(fit.lm$residuals)
+
+# xreg is the external variables for the regression
+print(arima.0.0.1<- arima(resids, order=c(0,0,1), xreg=gas_dataset$Input.gas.rate))
+
+plot(arima.0.0.1$residuals)
+acf(arima.0.0.1$residuals)
+
+```
+
+There still appears to be autocorrelation in the residuals--this is probably because we did not use an AR model to model the residuals.
+
+***Use ARIMA (1,0,0) model for the residuals. Adjust the Input gas rate and Output CO2 % with the AR coefficient. Combine with the linear regression model. Plot the residuals.***
+
+```{r}
+
+print(arima.1.0.0<- arima(resids, order=c(1,0,0), xreg=gas_dataset$Input.gas.rate))
+
+plot(arima.1.0.0$residuals)
+acf(arima.1.0.0$residuals)
+```
+The residuals still exhibit a pattern, but an MA portion of the ARMA model may help.
+
+***Use ARIMA (0,0,2) model for the residuals. Adjust the Input gas rate and Output CO2 % with the MA coefficient. Combine with the linear regression model. Plot the residuals.***
+```{r}
+
+print(arima.0.0.2<- arima(resids, order=c(0,0,2), xreg=gas_dataset$Input.gas.rate))
+
+plot(arima.0.0.2$residuals)
+acf(arima.0.0.2$residuals)
+```
+
+***Use ARIMA (2,0,0) model for the residuals. Adjust the Input gas rate and Output CO2 % with the AR coefficient. Combine with the linear regression model. Plot the residuals.***
+
+```{r}
+
+print(arima.2.0.0<- arima(resids, order=c(2,0,0), xreg=gas_dataset$Input.gas.rate))
+
+plot(arima.2.0.0$residuals)
+acf(arima.2.0.0$residuals)
+```
+
+
+***Use ARIMA (2,0,2) model for the residuals. Adjust the Input gas rate and Output CO2 % with the AR and MA coefficients. Combine with the linear regression model. Plot the residuals.***
+```{r}
+
+print(arima.2.0.2<- arima(resids, order=c(2,0,2), xreg=gas_dataset$Input.gas.rate))
+
+plot(arima.2.0.2$residuals)
+acf(arima.2.0.2$residuals)
+```
+
+Finally, we see a residual ACF plot that does not exhibit apparent patterns.
+
+
+
+***Use fractional ARIMA model (aka ARFIMA) for the output gas CO2% - plot the residuals, acf and pacf plots of the model. You can use an R package like fracdiff***
+```{r}
+arfima.fit<-fracdiff(gas_dataset$Outlet.gas.CO2.percentage, nar=2, nma=2)
+arfima.residuals<- forecast(arfima.fit)$residuals
+acf(forecast(arfima.fit)$residuals)
+pacf(forecast(arfima.fit)$residuals)
+```
+
+Both the acf and the pacf both exhibit no real pattern. This tells us that the model dida good job of accounting for the autocorrelation that the regession model missed. One downside of this model is that we do not have the gas input variable in the model anywhere.
+
+I'd say that the Arfima model gives the best results, in terms of the residuals being close to white noise.
